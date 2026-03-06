@@ -8,35 +8,35 @@ Ce formulaire multi-étapes guide les organisateurs d'un Digital Cleanup Day dan
 ---
 ## ✨ Fonctionnalités
 
-- 📝 Formulaire en 3 étapes** avec barre de progression
-- ✅ Validation des champs obligatoires** avant de passer à l'étape suivante
-- 🎓 Sensibilisation : webinaires, Fresque du Numérique, jeux sérieux (Numéville, Dowino, The Wokies), autres formats
-- ♻️ Réemploi : don, réparation, protection, réutilisation par type d'équipement
-- 🗂️ Données : e-mails, publications, fichiers cloud/local supprimés, applications désinstallées, Go récupérés
-- 🔋 Recyclage : collecte d'équipements DEEE (quantité + poids en kg)
-- 💾 Sauvegarde automatique** dans le `localStorage` du navigateur
-- ⬇️ Export JSON téléchargeable directement depuis le navigateur
-- 🔄 Réinitialisation du formulaire en un clic
+Formulaire de collecte des donnée
+- 🎓 **Sensibilisation** : webinaires, Fresque du Numérique, jeux sérieux (Numéville, Dowino, The Wokies), autres formats
+- ♻️ **Réemploi** : don, réparation, protection, réutilisation par type d'équipement
+- 🗂️ **Données** : e-mails, publications, fichiers cloud/local supprimés, applications désinstallées, Go récupérés
+- 🔋 **Recyclage** : collecte d'équipements DEEE (quantité + poids en kg)
+et 
+- ⬇️ **Export JSON** téléchargeable directement depuis le navigateur
 
 ---
 ## 🗂️ Structure du projet
 
+```
 📦 digital-cleanup-day/
 ├── index.html   # Structure HTML du formulaire
 ├── app.js       # Logique JavaScript (navigation, validation, export)
 └── style.css    # Styles de l'application
+```
 
 ---
 
 ## 🚀 Installation & Utilisation
 Aucune dépendance, aucun framework. L'application fonctionne entièrement côté client.
 
-1. Cloner le dépôt**
+1. Cloner le dépôt
    ```bash
    git clone https://github.com/votre-utilisateur/digital-cleanup-day.git
    ```
 
-2. Ouvrir le fichier `index.html`** dans un navigateur web moderne.
+2. Ouvrir le fichier `index.html` dans un navigateur web moderne.
 
 > ⚠️ Aucun serveur backend n'est requis.
 
@@ -77,7 +77,7 @@ Les données sont exportées sous forme d'un objet JSON structuré comme suit :
 
 ## 📅 Contexte
 
-Le **Digital Cleanup Day** est un événement mondial annuel invitant particuliers et organisations à nettoyer leurs données numériques et à agir pour un numérique plus responsable.
+Le **Digital Cleanup** Day est un événement mondial annuel invitant particuliers et organisations à nettoyer leurs données numériques et à agir pour un numérique plus responsable.
 
 🔗 [Site officiel Digital Cleanup Day](https://www.digitalcleanupday.org/)
 
