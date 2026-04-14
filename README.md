@@ -17,62 +17,46 @@ et
 - ⬇️ **Export JSON** téléchargeable directement depuis le navigateur
 
 ---
-## 🗂️ Structure du projet
+## 📋 Composants du Projet
 
-```
-📦 digital-cleanup-day/
-├── index.html   # Structure HTML du formulaire
-├── app.js       # Logique JavaScript (navigation, validation, export)
-└── style.css    # Styles de l'application
-```
+Le projet s'articule autour de quatre piliers principaux :
 
----
+### 1. Formulaire de Collecte (`index.html`)
+Un formulaire interactif en trois étapes permettant aux structures (entreprises, associations, collectivités, écoles, citoyens) de saisir leurs résultats :
+*   **Sensibilisation** : Webinaires, Fresques du Numérique, jeux pédagogiques.
+*   **Réemploi** : Don, réparation et réutilisation d'équipements (ordinateurs, smartphones, tablettes).
+*   **Données** : Suppression de fichiers (local/cloud), d'e-mails et d'applications.
+*   **Recyclage** : Collecte de DEEE (Déchets d'Équipements Électriques et Électroniques).
 
-## 🚀 Installation & Utilisation
-Aucune dépendance, aucun framework. L'application fonctionne entièrement côté client.
+### 2. Tableau de Bord National (`dashboard.html`)
+Un outil de visualisation dynamique qui agrège les données remontées via Google Sheets :
+*   **KPIs Généraux** : Nombre de Cleanups, participants totaux, audience sensibilisée.
+*   **Impact CO₂** : Calcul automatisé des tonnes de CO₂ évitées grâce aux actions de nettoyage et de réemploi (basé sur les facteurs de l'ADEME).
+*   **Analyses Graphiques** : Répartition par type de structure, distribution géographique, et comparaison Cloud vs Local.
+*   **Top Contributeurs** : Mise en avant des structures ayant généré le plus d'impact.
 
-1. Cloner le dépôt
-   ```bash
-   git clone https://github.com/votre-utilisateur/digital-cleanup-day.git
-   ```
+### 3. Méthodologie (`methodologie.html`)
+Une page dédiée explicitant les règles de calcul et les sources utilisées pour les estimations d'impact :
+*   Détail des facteurs d'émission carbone.
+*   Sources scientifiques (ADEME, INR).
+*   Hypothèses de calcul pour le réemploi et le recyclage.
 
-2. Ouvrir le fichier `index.html` dans un navigateur web moderne.
+### 4. Vue Régionale (`regions.html`)
+Une page permettant de filtrer et de visualiser les statistiques par région française et par pays limitrophes.
 
-> ⚠️ Aucun serveur backend n'est requis.
+## 🛠️ Stack Technique
 
----
+*   **Frontend** : HTML5, CSS3 (Vanilla), JavaScript (ES6+).
+*   **Visualisation** : [Chart.js](https://www.chartjs.org/) pour les graphiques.
+*   **Backend & Stockage** : Google Sheets via Google Apps Script (interfaçage via `fetch` API).
+*   **Iconographie** : Emojis et logos personnalisés.
+*   **Impact Environnemental** : Intégration interactive des équivalences via l'iframe de [ImpactCO2.fr](https://impactco2.fr).
 
-## 📊 Format des données exportées
+## 🚀 Fonctionnement
 
-Les données sont exportées sous forme d'un objet JSON structuré comme suit :
-
-```json
-{
-  "metadata": {
-    "dateSubmission": "2026-03-21T10:00:00.000Z",
-    "cleanupId": "120001",
-    "organizer": "Nom de l'organisation",
-    "understoodImpacts": true,
-    "actionsRealisees": ["sensibilisation", "reemploi", "donnees", "recyclage"]
-  },
-  "sensibilisation": { ... },
-  "reemploi": { ... },
-  "donnees": { ... },
-  "recyclage": { ... }
-}
-```
-
----
-
-## 🛠️ Technologies utilisées
-
-| Technologie | Usage |
-|-------------|-------|
-| HTML5 | Structure du formulaire |
-| CSS3 | Mise en forme et responsive |
-| JavaScript (Vanilla) | Logique, validation, export |
-| localStorage | Persistance locale des données |
-
+1.  **Saisie** : L'organisateur remplit le formulaire sur `index.html`.
+2.  **Envoi** : Les données sont envoyées vers un script Google Apps Script qui les enregistre dans une feuille de calcul maître.
+3.  **Visualisation** : Le dashboard (`dashboard.html`) interroge la feuille de calcul via une API dédiée, traite les données en JavaScript et met à jour les indicateurs et graphiques instantanément.
 ---
 
 ## 📅 Contexte
