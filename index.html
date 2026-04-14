@@ -1,323 +1,1058 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Digital Cleanup Day - Collecte de données</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-
-  <header>
-    <div class="header-content">
-      <h1>🌱 Digital Cleanup Day</h1>
-      <p>Formulaire de collecte de données</p>
-    </div>
-    <!-- Barre de progression -->
-    <div class="progress-bar">
-      <div class="step active" id="step-indicator-1">1. Informations</div>
-      <div class="step" id="step-indicator-2">2. Données</div>
-      <div class="step" id="step-indicator-3">3. Confirmation</div>
-    </div>
-  </header>
-
-  <main>
-
-    <!-- ===================== ÉTAPE 1 ===================== -->
-    <section id="step-1" class="form-step active">
-      <h2>Informations Générales</h2>
-
-      <div class="card">
-        <div class="form-group">
-          <label class="required">Q1 — En passant à l'action, j'ai compris les impacts liés au numérique :</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="understoodImpacts" value="true" required />
-              <span>✅ Oui</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="understoodImpacts" value="false" />
-              <span>❌ Non</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="cleanupId" class="required">Q2 — Numéro du Digital Cleanup :</label>
-          <input type="text" id="cleanupId" placeholder="Ex: 120001" required />
-        </div>
-
-        <div class="form-group">
-          <label for="organizer" class="required">Q3 — Organisé par :</label>
-          <input type="text" id="organizer" placeholder="Nom de l'organisation" required />
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Types d'actions réalisées</h3>
-        <p class="hint">Sélectionnez une ou plusieurs actions menées lors de votre Digital Cleanup Day.</p>
-
-        <div class="checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" name="actionType" value="sensibilisation" id="check-sensibilisation"/>
-            <span>🎓 Digital Cleanup Sensibilisation</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" name="actionType" value="reemploi" id="check-reemploi"/>
-            <span>♻️ Digital Cleanup Réemploi</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" name="actionType" value="donnees" id="check-donnees"/>
-            <span>🗂️ Digital Cleanup Données</span>
-          </label>
-          <label class="checkbox-label">
-            <input type="checkbox" name="actionType" value="recyclage" id="check-recyclage"/>
-            <span>🔋 Digital Cleanup Recyclage</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="btn-container">
-        <button class="btn btn-primary" onclick="goToStep2()">Suivant →</button>
-      </div>
-    </section>
-
-    <!-- ===================== ÉTAPE 2 ===================== -->
-    <section id="step-2" class="form-step">
-      <h2>Saisie des Données</h2>
-
-      <!-- SENSIBILISATION -->
-      <div id="form-sensibilisation" class="action-form hidden">
-        <div class="card">
-          <h3>🎓 Sensibilisation — Collecte des chiffres</h3>
-          <p class="hint">Renseignez le nombre de participants réels et l'audience touchée pour chaque type de sensibilisation.</p>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Type de sensibilisation</th>
-                  <th>Participants réels</th>
-                  <th>Personnes touchées (audience)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Webinaire de sensibilisation</td>
-                  <td><input type="number" min="0" id="s_webinaire_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_webinaire_audience" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Fresque du numérique</td>
-                  <td><input type="number" min="0" id="s_fresque_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_fresque_audience" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Jeux Numéville</td>
-                  <td><input type="number" min="0" id="s_numeville_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_numeville_audience" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Jeux Dowino</td>
-                  <td><input type="number" min="0" id="s_dowino_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_dowino_audience" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Jeux The Wokies</td>
-                  <td><input type="number" min="0" id="s_wokies_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_wokies_audience" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>
-                    Autre format
-                    <input type="text" id="s_autre_label" placeholder="Précisez le format..." class="inline-text"/>
-                  </td>
-                  <td><input type="number" min="0" id="s_autre_participants" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="s_autre_audience" placeholder="0"/></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- RÉEMPLOI -->
-      <div id="form-reemploi" class="action-form hidden">
-        <div class="card">
-          <h3>♻️ Réemploi — Collecte des chiffres</h3>
-          <p class="hint">Renseignez les quantités par type d'équipement et par action de réemploi.</p>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Type d'équipement</th>
-                  <th>Don</th>
-                  <th>Réparation</th>
-                  <th>Protection</th>
-                  <th>Réutilisation</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Ordinateur fixe (unité centrale)</td>
-                  <td><input type="number" min="0" id="r_fixe_don" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_fixe_reparation" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_fixe_protection" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_fixe_reutilisation" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Écran</td>
-                  <td><input type="number" min="0" id="r_ecran_don" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_ecran_reparation" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_ecran_protection" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_ecran_reutilisation" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Ordinateur portable</td>
-                  <td><input type="number" min="0" id="r_portable_don" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_portable_reparation" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_portable_protection" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_portable_reutilisation" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Tablette</td>
-                  <td><input type="number" min="0" id="r_tablette_don" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_tablette_reparation" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_tablette_protection" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_tablette_reutilisation" placeholder="0"/></td>
-                </tr>
-                <tr>
-                  <td>Smartphone</td>
-                  <td><input type="number" min="0" id="r_smartphone_don" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_smartphone_reparation" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_smartphone_protection" placeholder="0"/></td>
-                  <td><input type="number" min="0" id="r_smartphone_reutilisation" placeholder="0"/></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- DONNÉES -->
-      <div id="form-donnees" class="action-form hidden">
-        <div class="card">
-          <h3>🗂️ Données — Nettoyage et suppression</h3>
-
-          <h4>Fichiers supprimés</h4>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="d_emails">📧 E-mails supprimés :</label>
-              <input type="number" min="0" id="d_emails" placeholder="0"/>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Digital Cleanup Day - Collecte de données</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <!-- ========== LOADER ========== -->
+        <div id="loader-overlay">
+            <div class="loader-box">
+                <div class="spinner"></div>
+                <p>Envoi vers Google Sheets...</p>
             </div>
-            <div class="form-group">
-              <label for="d_posts">📱 Publications réseaux sociaux supprimées :</label>
-              <input type="number" min="0" id="d_posts" placeholder="0"/>
-            </div>
-            <div class="form-group">
-              <label for="d_cloud_files">☁️ Fichiers supprimés sur le cloud :</label>
-              <input type="number" min="0" id="d_cloud_files" placeholder="0"/>
-            </div>
-            <div class="form-group">
-              <label for="d_local_files">💻 Fichiers supprimés en local (PC / tablette) :</label>
-              <input type="number" min="0" id="d_local_files" placeholder="0"/>
-            </div>
-            <div class="form-group">
-              <label for="d_apps">📲 Applications désinstallées sur smartphone :</label>
-              <input type="number" min="0" id="d_apps" placeholder="0"/>
-            </div>
-          </div>
-
-          <h4>Espace de stockage récupéré (estimation)</h4>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="d_go_cloud">☁️ Go récupérés sur le cloud :</label>
-              <input type="number" min="0" step="0.1" id="d_go_cloud" placeholder="0.0"/>
-            </div>
-            <div class="form-group">
-              <label for="d_go_local">💾 Go récupérés en local (PC / smartphone / tablette) :</label>
-              <input type="number" min="0" step="0.1" id="d_go_local" placeholder="0.0"/>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <!-- RECYCLAGE -->
-      <div id="form-recyclage" class="action-form hidden">
-        <div class="card">
-          <h3>🔋 Recyclage — Collecte d'équipements DEEE</h3>
-          <p class="hint">Renseignez le nombre d'équipements collectés et le poids total en kg.</p>
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Type d'équipement</th>
-                  <th>Quantité (nb d'équipements)</th>
-                  <th>Poids total récolté (kg)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Ordinateur fixe (unité centrale)</td>
-                  <td><input type="number" min="0" id="rec_fixe_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_fixe_poids" placeholder="0.0"/></td>
-                </tr>
-                <tr>
-                  <td>Écran <span class="hint-inline">(poids moyen : 3 kg)</span></td>
-                  <td><input type="number" min="0" id="rec_ecran_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_ecran_poids" placeholder="0.0"/></td>
-                </tr>
-                <tr>
-                  <td>Ordinateur portable <span class="hint-inline">(poids moyen : 2 kg)</span></td>
-                  <td><input type="number" min="0" id="rec_portable_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_portable_poids" placeholder="0.0"/></td>
-                </tr>
-                <tr>
-                  <td>Tablette</td>
-                  <td><input type="number" min="0" id="rec_tablette_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_tablette_poids" placeholder="0.0"/></td>
-                </tr>
-                <tr>
-                  <td>Smartphone <span class="hint-inline">(poids moyen : 0,2 kg)</span></td>
-                  <td><input type="number" min="0" id="rec_smartphone_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_smartphone_poids" placeholder="0.0"/></td>
-                </tr>
-                <tr>
-                  <td>Divers <span class="hint-inline">(souris, clavier, câbles, accessoires...)</span></td>
-                  <td><input type="number" min="0" id="rec_divers_qte" placeholder="0"/></td>
-                  <td><input type="number" min="0" step="0.1" id="rec_divers_poids" placeholder="0.0"/></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+        <!-- ========== HEADER ========== -->
+        <header>
+            <div class="header-content">
+                <div class="header-title-row">
+                    <img
+                        src="logo_dcd.png"
+                        alt="Digital Cleanup Day"
+                        class="header-title-logo"
+                        onerror="this.style.display = 'none'"
+                    />
+                    <div class="header-title-text">
+                        <h1>Digital Cleanup Day</h1>
+                        <p>Formulaire de collecte de données</p>
+                    </div>
+                </div>
+            </div>
 
-      <div class="btn-container">
-        <button class="btn btn-secondary" onclick="goToStep1()">← Retour</button>
-        <button class="btn btn-primary" onclick="submitForm()">Soumettre ✅</button>
-      </div>
-    </section>
+            <div class="progress-bar">
+                <div class="progress-step active" id="step-indicator-1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Informations</div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" id="step-indicator-2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Données</div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" id="step-indicator-3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        </header>
 
-    <!-- ===================== ÉTAPE 3 ===================== -->
-    <section id="step-3" class="form-step">
-      <div class="card confirmation-card">
-        <div class="success-icon">✅</div>
-        <h2>Merci pour votre participation !</h2>
-        <p>Vos données ont bien été enregistrées. Voici un récapitulatif au format JSON :</p>
-        <pre id="json-output"></pre>
-        <div class="btn-container">
-          <button class="btn btn-secondary" onclick="downloadJSON()">⬇️ Télécharger le JSON</button>
-          <button class="btn btn-primary" onclick="resetForm()">🔄 Nouveau formulaire</button>
-        </div>
-      </div>
-    </section>
+        <!-- ========== MAIN ========== -->
+        <main>
+            <!-- ==================== ÉTAPE 1 ==================== -->
+            <section id="step-1" class="form-step active">
+                <div class="section-title">
+                    <span class="section-icon">📋</span>
+                    <h2>Informations Générales</h2>
+                </div>
 
-  </main>
+                <div class="card">
+                    <div class="card-header">
+                        <span>👥</span> Personnes touchées par le Digital Cleanup Day
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="required" for="personneattainte"
+                                >Q1 — Combien de personnes ont été touchées par votre action Digital Cleanup Day ?</label
+                            >
+                            <input
+                                type="number"
+                                id="personneattainte"
+                                name="personneattainte"
+                                min="0"
+                                placeholder="Nombre de personnes"
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
 
-  <footer>
-    <p>Digital Cleanup Day — Formulaire de collecte de données © 2026</p>
-  </footer>
+			   <div class="card">
+			     <div class="card-header">
+			       <span>🏷️</span> Identification de l'événement
+			     </div>
+			     <div class="card-body">
+			       <div class="form-grid-2">
 
-  <script src="app.js"></script>
-</body>
+			         <div class="form-group">
+			           <label for="cleanupId" class="required">Q2 — Numéro du Digital Cleanup (à récupérer sur le site):</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">🔢</span>
+			             <input type="text" id="cleanupId" placeholder="Ex : 005007" required />
+			           </div>
+			         </div>
+
+			         <div class="form-group">
+			           <label for="organizer" class="required">Q3 — Organisé par :</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">🏢</span>
+			             <input type="text" id="organizer" placeholder="Nom de l'organisation" required />
+			           </div>
+			         </div>
+
+			         <div class="form-group">
+			           <label for="structureType" class="required">Q4 — Type de structure :</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">🏛️</span>
+			             <select id="structureType" required>
+			               <option value="">-- Sélectionnez --</option>
+			               <option value="entreprise">Entreprise</option>
+			               <option value="association">Association</option>
+			               <option value="collectivite">Collectivité territoriale</option>
+			               <option value="ecole">École / Université</option>
+			               <option value="citoyen">Citoyen (solo)</option>
+			               <option value="autre">Autre</option>
+			             </select>
+			           </div>
+			         </div>
+
+			         <div class="form-group">
+			           <label for="region" class="required">Q5 — Région FR / Pays :</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">🗺️</span>
+			             <select id="region" required>
+			               <option value="">-- Sélectionnez --</option>
+			               <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+			               <option value="Bourgogne-Franche-Comté">Bourgogne-Franche-Comté</option>
+			               <option value="Bretagne">Bretagne</option>
+			               <option value="Centre-Val de Loire">Centre-Val de Loire</option>
+			               <option value="Corse">Corse</option>
+			               <option value="Grand Est">Grand Est</option>
+			               <option value="Guadeloupe">Guadeloupe</option>
+			               <option value="Guyane">Guyane</option>
+			               <option value="Hauts-de-France">Hauts-de-France</option>
+			               <option value="Île-de-France">Île-de-France</option>
+			               <option value="La Réunion">La Réunion</option>
+			               <option value="Martinique">Martinique</option>
+			               <option value="Mayotte">Mayotte</option>
+			               <option value="Normandie">Normandie</option>
+			               <option value="Nouvelle-Aquitaine">Nouvelle-Aquitaine</option>
+			               <option value="Occitanie">Occitanie</option>
+			               <option value="Pays de la Loire">Pays de la Loire</option>
+			               <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
+						   <option value="Belgique">Belgique</option>
+						   <option value="Suisse">Suisse</option>
+						   <option value="Luxembourg">Luxembourg</option>
+			             </select>
+			           </div>
+			         </div>
+
+			         <div class="form-group">
+			           <label for="departement">Q6 — Département :</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">📍</span>
+			             <input type="text" id="departement" placeholder="Ex : Nord (59)" />
+			           </div>
+			         </div>
+
+			         <div class="form-group">
+			           <label for="eventDate" class="required">Q7 — Date de fin de l'événement 2026 :</label>
+			           <div class="input-wrapper">
+			             <span class="input-icon">📅</span>
+			             <input type="date" id="eventDate" required />
+			           </div>
+			         </div>
+
+			       </div>
+			     </div>
+			   </div>
+               
+
+                <div class="card">
+                    <div class="card-header">
+                        <span>🎯</span> Types d'actions réalisées
+                    </div>
+                    <div class="card-body">
+                        <p class="hint">
+                            Sélectionnez une ou plusieurs actions menées lors de
+                            votre Digital Cleanup Day.
+                        </p>
+                        <div class="checkbox-group">
+                            <label
+                                class="checkbox-label"
+                                for="check-sensibilisation"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="actionType"
+                                    value="sensibilisation"
+                                    id="check-sensibilisation"
+                                />
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">🎓</span>
+                                    <div>
+                                        <strong
+                                            >Digital Cleanup
+                                            Sensibilisation</strong
+                                        >
+                                        <small
+                                            >Webinaires, fresques, jeux
+                                            pédagogiques...</small
+                                        >
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="checkbox-label" for="check-reemploi">
+                                <input
+                                    type="checkbox"
+                                    name="actionType"
+                                    value="reemploi"
+                                    id="check-reemploi"
+                                />
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">♻️</span>
+                                    <div>
+                                        <strong
+                                            >Digital Cleanup Réemploi</strong
+                                        >
+                                        <small
+                                            >Don, réparation, protection,
+                                            réutilisation d'équipements</small
+                                        >
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="checkbox-label" for="check-donnees">
+                                <input
+                                    type="checkbox"
+                                    name="actionType"
+                                    value="donnees"
+                                    id="check-donnees"
+                                />
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">🗂️</span>
+                                    <div>
+                                        <strong>Digital Cleanup Données</strong>
+                                        <small
+                                            >Suppression de fichiers, e-mails,
+                                            applications...</small
+                                        >
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="checkbox-label" for="check-recyclage">
+                                <input
+                                    type="checkbox"
+                                    name="actionType"
+                                    value="recyclage"
+                                    id="check-recyclage"
+                                />
+                                <div class="checkbox-content">
+                                    <span class="checkbox-icon">🔋</span>
+                                    <div>
+                                        <strong
+                                            >Digital Cleanup Recyclage</strong
+                                        >
+                                        <small
+                                            >Collecte d'équipements DEEE</small
+                                        >
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn btn-primary" onclick="goToStep2()">
+                        Suivant <span>→</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ==================== ÉTAPE 2 ==================== -->
+            <section id="step-2" class="form-step">
+                <div class="section-title">
+                    <span class="section-icon">📊</span>
+                    <h2>Saisie des Données</h2>
+                </div>
+
+                <!-- ---- SENSIBILISATION ---- -->
+                <div id="form-sensibilisation" class="action-form hidden">
+                    <div class="card">
+                        <div class="card-header green">
+                            <span>🎓</span> Sensibilisation — Collecte des
+                            chiffres
+                        </div>
+                        <div class="card-body">
+                            <p class="hint">
+                                Renseignez le nombre de participants réels et
+                                l'audience touchée pour chaque type de
+                                sensibilisation.
+                            </p>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Type de sensibilisation</th>
+                                            <th>👥 Participants réels</th>
+                                            <th>📣 Audience touchée</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">💻</span>
+                                                Webinaire de sensibilisation
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_webinaire_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_webinaire_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖼️</span>
+                                                Fresque du numérique
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_fresque_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_fresque_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🎮</span>
+                                                Jeux Numéville
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_numeville_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_numeville_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🎲</span>
+                                                Jeux Dowino
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_dowino_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_dowino_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🃏</span>
+                                                Jeux The Wokies
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_wokies_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_wokies_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr class="row-other">
+                                            <td>
+                                                <span class="row-icon">➕</span>
+                                                Autre format
+                                                <input
+                                                    type="text"
+                                                    id="s_autre_label"
+                                                    placeholder="Précisez le format..."
+                                                    class="inline-text"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_autre_participants"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="s_autre_audience"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- RÉEMPLOI ---- -->
+                <div id="form-reemploi" class="action-form hidden">
+                    <div class="card">
+                        <div class="card-header blue">
+                            <span>♻️</span> Réemploi — Collecte des chiffres
+                        </div>
+                        <div class="card-body">
+                            <p class="hint">
+                                Renseignez les quantités par type d'équipement
+                                et par action de réemploi.
+                            </p>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Type d'équipement</th>
+                                            <th>🎁 Don</th>
+                                            <th>🔧 Réparation</th>
+                                            <th>🛡️ Protection</th>
+                                            <th>🔄 Réutilisation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖥️</span>
+                                                Ordinateur fixe (unité centrale)
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_fixe_don"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_fixe_reparation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_fixe_protection"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_fixe_reutilisation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖵</span>
+                                                Écran
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_ecran_don"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_ecran_reparation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_ecran_protection"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_ecran_reutilisation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">💻</span>
+                                                Ordinateur portable
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_portable_don"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_portable_reparation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_portable_protection"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_portable_reutilisation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">📱</span>
+                                                Tablette
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_tablette_don"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_tablette_reparation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_tablette_protection"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_tablette_reutilisation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">📲</span>
+                                                Smartphone
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_smartphone_don"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_smartphone_reparation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_smartphone_protection"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="r_smartphone_reutilisation"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- DONNÉES ---- -->
+                <div id="form-donnees" class="action-form hidden">
+                    <div class="card">
+                        <div class="card-header purple">
+                            <span>🗂️</span> Données — Nettoyage et suppression
+                        </div>
+                        <div class="card-body">
+                            <h4 class="subsection-title">
+                                📁 Fichiers supprimés
+                            </h4>
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label for="d_emails"
+                                        >📧 E-mails supprimés</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">✉️</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="d_emails"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="d_posts"
+                                        >📱 Publications réseaux sociaux</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">📲</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="d_posts"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="d_cloud_files"
+                                        >☁️ Fichiers supprimés sur le
+                                        cloud</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">🌐</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="d_cloud_files"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="d_local_files"
+                                        >💻 Fichiers supprimés en local (PC /
+                                        tablette)</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">🖥️</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="d_local_files"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="d_apps"
+                                        >📲 Applications désinstallées
+                                        (smartphone)</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">🗑️</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            id="d_apps"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="subsection-title">
+                                💾 Espace de stockage récupéré (estimation)
+                            </h4>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="d_go_cloud"
+                                        >☁️ Go récupérés sur le cloud</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">📦</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.1"
+                                            id="d_go_cloud"
+                                            placeholder="0.0"
+                                        />
+                                        <span class="input-suffix">Go</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="d_go_local"
+                                        >💾 Go récupérés en local (PC /
+                                        smartphone / tablette)</label
+                                    >
+                                    <div class="input-wrapper">
+                                        <span class="input-icon">📦</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.1"
+                                            id="d_go_local"
+                                            placeholder="0.0"
+                                        />
+                                        <span class="input-suffix">Go</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- RECYCLAGE ---- -->
+                <div id="form-recyclage" class="action-form hidden">
+                    <div class="card">
+                        <div class="card-header orange">
+                            <span>🔋</span> Recyclage — Collecte d'équipements
+                            DEEE
+                        </div>
+                        <div class="card-body">
+                            <p class="hint">
+                                Renseignez le nombre d'équipements collectés et
+                                le poids total en kg.
+                            </p>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Type d'équipement</th>
+                                            <th>🔢 Quantité (nb)</th>
+                                            <th>⚖️ Poids total (kg)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖥️</span>
+                                                Ordinateur fixe (unité centrale)
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_fixe_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_fixe_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖵</span>
+                                                Écran
+                                                <span class="hint-inline"
+                                                    >(moy. 3 kg)</span
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_ecran_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_ecran_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">💻</span>
+                                                Ordinateur portable
+                                                <span class="hint-inline"
+                                                    >(moy. 2 kg)</span
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_portable_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_portable_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">📱</span>
+                                                Tablette
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_tablette_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_tablette_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">📲</span>
+                                                Smartphone
+                                                <span class="hint-inline"
+                                                    >(moy. 0,2 kg)</span
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_smartphone_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_smartphone_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="row-icon">🖱️</span>
+                                                Divers
+                                                <span class="hint-inline"
+                                                    >(souris, clavier,
+                                                    câbles...)</span
+                                                >
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    id="rec_divers_qte"
+                                                    placeholder="0"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.1"
+                                                    id="rec_divers_poids"
+                                                    placeholder="0.0"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn btn-secondary" onclick="goToStep1()">
+                        ← Retour
+                    </button>
+                    <button class="btn btn-primary" onclick="submitForm()">
+                        Soumettre ✅
+                    </button>
+                </div>
+            </section>
+
+            <!-- ==================== ÉTAPE 3 ==================== -->
+            <section id="step-3" class="form-step">
+                <div class="card confirmation-card">
+                    <div class="success-animation">
+                        <div class="success-circle">✅</div>
+                    </div>
+                    <h2>Merci pour votre participation !</h2>
+                    <p>
+                        Vos données ont bien été enregistrées dans Google
+                        Sheets.
+                    </p>
+
+                    <div class="summary-badges" id="summary-badges"></div>
+
+                    <details class="json-details">
+                        <summary>
+                            🔍 Voir le détail JSON des données soumises
+                        </summary>
+                        <pre id="json-output"></pre>
+                    </details>
+
+                    <div class="btn-container centered">
+                        <button
+                            class="btn btn-secondary"
+                            onclick="downloadJSON()"
+                        >
+                            ⬇️ Télécharger en local ses données
+                        </button>
+                        <button class="btn btn-primary" onclick="resetForm()">
+                            🔄 Nouveau formulaire
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer>
+			<a href="methodologie.html" class="btn btn-secondary">
+			  🧮 Méthodologie
+			</a>
+            <div class="footer-logos">
+                <a
+                    href="https://digital-cleanup-day.fr"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    <img
+                        src="logo_dcd.png"
+                        alt="Digital Cleanup Day"
+                        class="footer-logo-img"
+                        onerror="this.style.display = 'none'"
+                    />
+                </a>
+                <a href="https://institutnr.org" target="_blank" rel="noopener">
+                    <img
+                        src="logo_inr.jpg"
+                        alt="Institut du Numérique Responsable"
+                        class="footer-logo-img"
+                        onerror="this.style.display = 'none'"
+                    />
+                </a>
+            </div>
+            <p>
+                🌱 Digital Cleanup Day — Formulaire de collecte de données ©
+                2026
+            </p>
+		
+        </footer>
+        <script src="app.js"></script>
+    </body>
 </html>

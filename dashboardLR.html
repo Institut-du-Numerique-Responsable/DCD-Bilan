@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' https://cdn.jsdelivr.net;
+             frame-src https://impactco2.fr;
+             connect-src https://script.google.com https://script.googleusercontent.com;
+             img-src 'self' data:;
+             style-src 'self' 'unsafe-inline'">
+  <title>Dashboard LR — Digital Cleanup Day</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+          integrity="sha384-JUh163oCRItcbPme8pYnROHQMC6fNKTBWtRG3I3I0erJkzNgL7uxKlNwcrcFKeqF"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ========== LOADER ========== -->
+  <div id="loader-dash">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="header-content">
+      <div class="header-title-row">
+        <img
+          src="logo_dcd.png"
+          alt="Digital Cleanup Day"
+          class="header-title-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="header-title-text">
+          <h1>Dashboard LR</h1>
+          <p>Digital Cleanup Day — Bilan consolidé 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div class="filters-bar">
+      <a href="dashboard.html" class="btn btn-primary">
+        ← Tableau de bord national
+      </a>
+      <a href="index.html" class="btn btn-secondary">
+        📋 Formulaire
+      </a>
+      <a href="methodologie.html" class="btn btn-secondary">
+        🧮 Méthodologie
+      </a>
+      <a href="regions.html" class="btn btn-secondary">
+        🗺️ Régions
+      </a>
+    </div>
+
+    <!-- ===== BANDEAU DCD SUIVIS ===== -->
+    <div class="co2-detail-card" style="margin-bottom:24px">
+      <div class="co2-detail-header green">
+        <span>🔍</span>
+        <span>DCD suivis dans ce tableau de bord</span>
+        <span class="co2-detail-total" id="lr-nb-dcd-suivis">10 DCD</span>
+      </div>
+      <div class="co2-detail-body">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;padding:4px 0" id="lr-badges-container"></div>
+      </div>
+    </div>
+
+    <!-- ===== KPI GÉNÉRAUX ===== -->
+    <div class="section-title">
+      <span class="section-icon">📊</span>
+      <h2>Vue d'ensemble</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card pink">
+        <div class="kpi-icon">🌱</div>
+        <div class="kpi-value" id="kpi-total-dcd">—</div>
+        <div class="kpi-label">DCD remontés</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-value" id="kpi-participants">—</div>
+        <div class="kpi-label">Participants aux actions</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">📣</div>
+        <div class="kpi-value" id="kpi-audience">—</div>
+        <div class="kpi-label">Personnes sensibilisées</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-icon">♻️</div>
+        <div class="kpi-value" id="kpi-reemploi">—</div>
+        <div class="kpi-label">Équipements réemployés</div>
+      </div>
+    </div>
+
+    <!-- ===== DCD SENSIBILISATION ===== -->
+    <div class="section-title">
+      <span class="section-icon">📣</span>
+      <h2>Digital Cleanup Sensibilisation</h2>
+    </div>
+
+    <div class="co2-detail-grid">
+      <div class="co2-detail-card">
+        <div class="co2-detail-header green">
+          <span>👥</span>
+          <span>Participation</span>
+          <span class="co2-detail-total" id="kpi-sensi-total">—</span>
+        </div>
+        <div class="co2-detail-body">
+          <div class="co2-detail-row">
+            <span>👥 Participants directs</span>
+            <strong id="kpi-participants-detail">—</strong>
+          </div>
+          <div class="co2-detail-row">
+            <span>📣 Audience indirecte</span>
+            <strong id="kpi-audience-detail">—</strong>
+          </div>
+          <div class="co2-detail-row">
+            <span>📋 Sessions organisées</span>
+            <strong id="kpi-sensi-sessions">—</strong>
+          </div>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header blue">
+          <span>🎓</span>
+          <span>Formats de sensibilisation</span>
+        </div>
+        <div class="co2-detail-body">
+          <table class="top-table">
+            <thead><tr><th>Format</th><th>Nombre</th></tr></thead>
+            <tbody id="sensi-formats-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header orange">
+          <span>🏆</span>
+          <span>Top organisateurs</span>
+        </div>
+        <div class="co2-detail-body">
+          <table class="top-table">
+            <thead><tr><th>#</th><th>Organisateur</th><th>Participants</th></tr></thead>
+            <tbody id="sensi-top-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DCD DONNÉES ===== -->
+    <div class="section-title">
+      <span class="section-icon">🗂️</span>
+      <h2>Digital Cleanup Données</h2>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr))">
+      <div class="kpi-card pink">
+        <div class="kpi-icon">📧</div>
+        <div class="kpi-value" id="kpi-emails">—</div>
+        <div class="kpi-label">Emails supprimés</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">☁️</div>
+        <div class="kpi-value" id="kpi-fichiers-cloud">—</div>
+        <div class="kpi-label">Fichiers cloud supprimés</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">💻</div>
+        <div class="kpi-value" id="kpi-fichiers-local">—</div>
+        <div class="kpi-label">Fichiers locaux supprimés</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-icon">📲</div>
+        <div class="kpi-value" id="kpi-apps">—</div>
+        <div class="kpi-label">Apps désinstallées</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">☁️</div>
+        <div class="kpi-value" id="kpi-go-cloud">—</div>
+        <div class="kpi-label">Données cloud supprimées</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">💾</div>
+        <div class="kpi-value" id="kpi-go-local">—</div>
+        <div class="kpi-label">Données locales supprimées</div>
+      </div>
+    </div>
+
+    <!-- ===== DCD RÉEMPLOI ===== -->
+    <div class="section-title">
+      <span class="section-icon">♻️</span>
+      <h2>Digital Cleanup Réemploi</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card pink">
+        <div class="kpi-icon">📲</div>
+        <div class="kpi-value" id="kpi-smartphones">—</div>
+        <div class="kpi-label">Smartphones</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">💻</div>
+        <div class="kpi-value" id="kpi-portables">—</div>
+        <div class="kpi-label">Ordinateurs portables</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">🖥️</div>
+        <div class="kpi-value" id="kpi-fixes">—</div>
+        <div class="kpi-label">Ordinateurs fixes</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-icon">🖵</div>
+        <div class="kpi-value" id="kpi-ecrans">—</div>
+        <div class="kpi-label">Écrans</div>
+      </div>
+    </div>
+
+    <!-- ===== DCD RECYCLAGE ===== -->
+    <div class="section-title">
+      <span class="section-icon">🔋</span>
+      <h2>Digital Cleanup Recyclage</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card pink">
+        <div class="kpi-icon">⚖️</div>
+        <div class="kpi-value" id="kpi-poids-total">—</div>
+        <div class="kpi-label">Tonnes collectées</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-value" id="kpi-recycle">—</div>
+        <div class="kpi-label">kg recyclés (76%)</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-value" id="kpi-valorise">—</div>
+        <div class="kpi-label">kg valorisés (12%)</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-icon">✨</div>
+        <div class="kpi-value" id="kpi-reutilise">—</div>
+        <div class="kpi-label">kg réutilisés (1%)</div>
+      </div>
+    </div>
+
+    <!-- ===== IMPACT CO2 ===== -->
+    <div class="section-title">
+      <span class="section-icon">🌍</span>
+      <h2>Impact CO₂ & Équivalences</h2>
+    </div>
+
+    <div class="co2-card">
+      <div class="co2-main">
+        <div class="co2-value" id="co2-kg">—</div>
+        <div class="co2-label">t CO₂ évités au total</div>
+        <div class="co2-sublabel" id="co2-go-source">—</div>
+      </div>
+    </div>
+
+    <div class="co2-detail-grid">
+      <div class="co2-detail-card">
+        <div class="co2-detail-header green">
+          <span>🗂️</span><span>DCD Données</span>
+          <span class="co2-detail-total" id="co2-donnees-total">—</span>
+        </div>
+        <div class="co2-detail-body">
+          <div class="co2-detail-row"><span>☁️ Go cloud supprimés</span><strong id="co2-go-cloud-kg">—</strong></div>
+          <div class="co2-detail-row"><span>💾 Go local supprimés</span><strong id="co2-go-local-kg">—</strong></div>
+          <div class="co2-detail-row"><span>📧 Emails supprimés</span><strong id="co2-emails-kg">—</strong></div>
+          <div class="co2-detail-row"><span>📱 Posts sociaux supprimés</span><strong id="co2-posts-kg">—</strong></div>
+          <div class="co2-detail-row"><span>📁 Fichiers cloud supprimés</span><strong id="co2-fichiers-cloud-kg">—</strong></div>
+          <div class="co2-detail-row"><span>💻 Fichiers locaux supprimés</span><strong id="co2-fichiers-local-kg">—</strong></div>
+          <div class="co2-detail-row"><span>📲 Apps désinstallées</span><strong id="co2-apps-kg">—</strong></div>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header blue">
+          <span>♻️</span><span>DCD Réemploi</span>
+          <span class="co2-detail-total" id="co2-reemploi-total">—</span>
+        </div>
+        <div class="co2-detail-body">
+          <div class="co2-detail-row"><span>📲 Smartphones</span><strong id="co2-smartphones">—</strong></div>
+          <div class="co2-detail-row"><span>💻 Ordinateurs portables</span><strong id="co2-portables">—</strong></div>
+          <div class="co2-detail-row"><span>🖥️ Ordinateurs fixes</span><strong id="co2-fixes">—</strong></div>
+          <div class="co2-detail-row"><span>🖵 Écrans</span><strong id="co2-ecrans">—</strong></div>
+          <div class="co2-detail-row"><span>📱 Tablettes</span><strong id="co2-tablettes">—</strong></div>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header orange">
+          <span>🔋</span><span>DCD Recyclage</span>
+          <span class="co2-detail-total" id="co2-recyclage-total">—</span>
+        </div>
+        <div class="co2-detail-body">
+          <div class="co2-detail-row"><span>⚖️ Poids DEEE recyclé (76%)</span><strong id="co2-poids-recycle">—</strong></div>
+          <div class="co2-detail-row"><span>🌱 CO₂ évité par substitution</span><strong id="co2-recyclage-kg">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="co2-repartition">
+      <h4>Répartition des sources de CO₂ évité</h4>
+      <div class="repartition-bar">
+        <div class="repartition-segment donnees" id="bar-donnees" style="width:0%">
+          <span id="co2-donnees-pct">0%</span> 🗂️ Données
+        </div>
+        <div class="repartition-segment reemploi" id="bar-reemploi" style="width:0%">
+          <span id="co2-reemploi-pct">0%</span> ♻️ Réemploi
+        </div>
+        <div class="repartition-segment recyclage" id="bar-recyclage" style="width:0%">
+          <span id="co2-recyclage-pct">0%</span> 🔋 Recyclage
+        </div>
+      </div>
+    </div>
+
+    <div class="impactco2-wrapper">
+      <h3>🔍 Équivalences concrètes</h3>
+      <p class="impactco2-desc">Visualisation interactive basée sur
+        <a href="https://impactco2.fr" target="_blank" rel="noopener">impactco2.fr</a> — Source ADEME
+      </p>
+      <div id="impactco2-container"></div>
+    </div>
+
+    <!-- ===== TOP 5 CLEANERS ===== -->
+    <div class="section-title">
+      <span class="section-icon">🏆</span>
+      <h2>Top contributeurs par impact CO₂</h2>
+    </div>
+
+    <div class="co2-detail-grid">
+      <div class="co2-detail-card">
+        <div class="co2-detail-header green"><span>🗂️</span><span>DCD Données</span></div>
+        <div class="co2-detail-body">
+          <table class="top-table">
+            <thead><tr><th>#</th><th>Organisateur</th><th>CO₂ évité</th></tr></thead>
+            <tbody id="top-donnees-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header blue"><span>♻️</span><span>DCD Réemploi</span></div>
+        <div class="co2-detail-body">
+          <table class="top-table">
+            <thead><tr><th>#</th><th>Organisateur</th><th>CO₂ évité</th></tr></thead>
+            <tbody id="top-reemploi-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="co2-detail-card">
+        <div class="co2-detail-header orange"><span>🔋</span><span>DCD Recyclage</span></div>
+        <div class="co2-detail-body">
+          <table class="top-table">
+            <thead><tr><th>#</th><th>Organisateur</th><th>CO₂ évité</th></tr></thead>
+            <tbody id="top-recyclage-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GRAPHIQUES ===== -->
+    <div class="section-title">
+      <span class="section-icon">📈</span>
+      <h2>Analyses graphiques</h2>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>☁️ Cloud vs Local — Fichiers et Go supprimés</h3>
+        <canvas id="chart-cloud-local"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>🏛️ Répartition par type de structure</h3>
+        <canvas id="chart-structures"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>♻️ Réemploi par équipement</h3>
+        <canvas id="chart-reemploi"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>🔋 Recyclage — répartition matières (kg)</h3>
+        <canvas id="chart-recyclage"></canvas>
+      </div>
+      <div class="chart-card chart-card-full">
+        <h3>🌍 CO₂ évité par source (kg)</h3>
+        <canvas id="chart-co2"></canvas>
+      </div>
+    </div>
+
+    <div class="last-update">
+      Dernière mise à jour : <span id="last-update-date">—</span>
+    </div>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-logos">
+      <a href="https://digital-cleanup-day.fr" target="_blank" rel="noopener">
+        <img src="logo_dcd.png" alt="Digital Cleanup Day" class="footer-logo-img" onerror="this.style.display='none'" />
+      </a>
+      <a href="https://institutnr.org" target="_blank" rel="noopener">
+        <img src="logo_inr.jpg" alt="Institut du Numérique Responsable" class="footer-logo-img logo-inr" onerror="this.style.display='none'" />
+      </a>
+    </div>
+    <p>🌱 Digital Cleanup Day — Dashboard LR © 2026</p>
+  </footer>
+
+  <script src="dashboardLR.js"></script>
+
+</body>
+</html>

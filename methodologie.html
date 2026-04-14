@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Méthodologie des calculs — Digital Cleanup Day</title>
+  <link rel="stylesheet" href="methodologie.css" />
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="header-content">
+      <div class="header-title-row">
+        <img
+          src="logo_dcd.png"
+          alt="Digital Cleanup Day"
+          class="header-title-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="header-title-text">
+          <h1>Méthodologie des calculs</h1>
+          <p>Sources, facteurs d'émission et règles de calcul</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="page-nav">
+    <a href="#donnees">🗂️ DCD Données</a>
+    <a href="#reemploi">♻️ DCD Réemploi</a>
+    <a href="#recyclage">🔋 DCD Recyclage</a>
+    <a href="#equivalences">🌍 Équivalences</a>
+    <a href="#sources">📚 Sources</a>
+    <a href="dashboard.html" class="btn-nav">← Tableau de bord</a>
+  </nav>
+
+  <!-- ========== MAIN ========== -->
+  <main>
+
+    <!-- ===== INTRODUCTION ===== -->
+    <section class="intro-section">
+      <div class="intro-card">
+        <div class="intro-icon">🧮</div>
+        <div class="intro-content">
+          <h2>Principe général</h2>
+          <p>
+            Le bilan carbone du Digital Cleanup Day est calculé en agrégeant
+            les données collectées via le formulaire de bilan et en appliquant
+            des <strong>facteurs d'émission certifiés</strong> issus de la
+            Base Empreinte® de l'ADEME et d'études scientifiques reconnues.
+          </p>
+          <p>
+            Le CO₂ total évité est la somme de deux contributions :
+            les <strong>actions sur les données numériques</strong> et les
+            <strong>actions de réemploi des équipements</strong>.
+          </p>
+          <div class="formula-box main-formula">
+            <div class="formula-title">Formule générale</div>
+            <div class="formula">
+              CO₂ total évité = CO₂ <sub>Données</sub> + CO₂ <sub>Réemploi</sub>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DCD DONNÉES ===== -->
+    <section id="donnees" class="calc-section">
+
+      <div class="section-title">
+        <span class="section-icon">🗂️</span>
+        <h2>Digital Cleanup Données</h2>
+      </div>
+
+      <div class="section-intro">
+        Le nettoyage de données numériques réduit l'empreinte carbone liée
+        au stockage et à la synchronisation permanente des fichiers sur les
+        infrastructures cloud et locales.
+      </div>
+
+      <!-- Go Cloud -->
+      <div class="calc-card">
+        <div class="calc-header green">
+          <span class="calc-icon">☁️</span>
+          <div>
+            <div class="calc-title">Go supprimés dans le cloud</div>
+            <div class="calc-subtitle">Facteur principal — Impact le plus significatif</div>
+          </div>
+          <div class="calc-factor">209,5 g CO₂/Go/an</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Go cloud supprimés × 209,5
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <h4>Pourquoi ce facteur ?</h4>
+            <p>
+              Chaque gigaoctet stocké dans le cloud génère une empreinte carbone
+              annuelle de <strong>209,5 g CO₂eq</strong>, incluant :
+            </p>
+            <ul>
+              <li>🏭 La consommation électrique des datacenters (serveurs, stockage)</li>
+              <li>❄️ Le refroidissement des infrastructures (PUE moyen : 1,58)</li>
+              <li>🔌 Le réseau de transmission et de synchronisation</li>
+              <li>🔧 La part amortie de la fabrication du matériel serveur</li>
+            </ul>
+            <div class="example-box">
+              <strong>Exemple :</strong> Supprimer 100 Go de données cloud
+              = 100 × 209,5 = <strong>20 950 g = 20,95 kg CO₂ évités par an</strong>
+            </div>
+          </div>
+          <div class="source-tag">
+            📚 Source : The Shift Project — Lean ICT (2019) / GreenIT.fr
+          </div>
+        </div>
+      </div>
+
+      <!-- Go Local -->
+      <div class="calc-card">
+        <div class="calc-header green-light">
+          <span class="calc-icon">💾</span>
+          <div>
+            <div class="calc-title">Go supprimés en local</div>
+            <div class="calc-subtitle">Disques durs, SSD, smartphones, tablettes</div>
+          </div>
+          <div class="calc-factor">3,2 g CO₂/Go/an</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Go local supprimés × 3,2
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <h4>Pourquoi un facteur plus faible ?</h4>
+            <p>
+              Le stockage local (disque dur, SSD) ne consomme de l'énergie
+              qu'en lecture/écriture, contrairement aux serveurs cloud qui
+              fonctionnent <strong>24h/24 en permanence</strong>.
+              L'impact est donc nettement plus faible.
+            </p>
+            <div class="example-box">
+              <strong>Exemple :</strong> Supprimer 50 Go en local
+              = 50 × 3,2 = <strong>160 g = 0,16 kg CO₂ évités par an</strong>
+            </div>
+          </div>
+          <div class="source-tag">
+            📚 Source : ADEME — Base Empreinte® / Étude NégaOctet (2021)
+          </div>
+        </div>
+      </div>
+
+      <!-- Emails -->
+      <div class="calc-card">
+        <div class="calc-header purple">
+          <span class="calc-icon">📧</span>
+          <div>
+            <div class="calc-title">Emails supprimés</div>
+            <div class="calc-subtitle">Boîtes mail, spams, newsletters</div>
+          </div>
+          <div class="calc-factor">0,3 g CO₂/email</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Nombre d'emails supprimés × 0,3
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <h4>Composition du facteur</h4>
+            <p>
+              Le facteur de <strong>0,3 g CO₂/email</strong> correspond à un
+              email moyen sans pièce jointe stocké sur un serveur mail.
+              Il intègre le stockage serveur et la bande passante réseau.
+            </p>
+            <div class="info-box">
+              <strong>ℹ️ Note :</strong> Un email avec pièce jointe peut peser
+              jusqu'à 50 g CO₂. Le facteur retenu est conservateur et correspond
+              à la moyenne d'un email standard.
+            </div>
+            <div class="example-box">
+              <strong>Exemple :</strong> Supprimer 10 000 emails
+              = 10 000 × 0,3 = <strong>3 000 g = 3 kg CO₂ évités</strong>
+            </div>
+          </div>
+          <div class="source-tag">
+            📚 Source : ADEME — La face cachée du numérique (2019)
+          </div>
+        </div>
+      </div>
+
+      <!-- Fichiers cloud -->
+      <div class="calc-card">
+        <div class="calc-header purple-light">
+          <span class="calc-icon">📁</span>
+          <div>
+            <div class="calc-title">Fichiers cloud supprimés</div>
+            <div class="calc-subtitle">Google Drive, OneDrive, Dropbox, iCloud...</div>
+          </div>
+          <div class="calc-factor">8,0 g CO₂/fichier</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Nombre de fichiers cloud × 8,0
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <h4>Hypothèse retenue</h4>
+            <p>
+              Ce facteur est une <strong>estimation moyenne</strong> basée sur
+              un fichier de taille moyenne de 500 Ko à 1 Mo stocké sur le cloud,
+              incluant les mécanismes de réplication et de sauvegarde automatique
+              (généralement ×3 sur les infrastructures cloud).
+            </p>
+            <div class="example-box">
+              <strong>Exemple :</strong> Supprimer 500 fichiers cloud
+              = 500 × 8 = <strong>4 000 g = 4 kg CO₂ évités</strong>
+            </div>
+          </div>
+          <div class="source-tag">
+            📚 Source : Estimation basée sur NégaOctet (2021) — Facteur estimé
+          </div>
+        </div>
+      </div>
+
+      <!-- Fichiers locaux -->
+      <div class="calc-card">
+        <div class="calc-header gray">
+          <span class="calc-icon">💻</span>
+          <div>
+            <div class="calc-title">Fichiers locaux supprimés</div>
+            <div class="calc-subtitle">PC, Mac, tablettes, smartphones</div>
+          </div>
+          <div class="calc-factor">2,0 g CO₂/fichier</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Nombre de fichiers locaux × 2,0
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <p>
+              Facteur plus faible que le cloud car le stockage local
+              ne génère pas de consommation réseau permanente ni de
+              réplication automatique.
+            </p>
+          </div>
+          <div class="source-tag">
+            📚 Source : Estimation basée sur ADEME Base Empreinte® — Facteur estimé
+          </div>
+        </div>
+      </div>
+
+      <!-- Applications -->
+      <div class="calc-card">
+        <div class="calc-header coral">
+          <span class="calc-icon">📲</span>
+          <div>
+            <div class="calc-title">Applications désinstallées</div>
+            <div class="calc-subtitle">Smartphones et tablettes</div>
+          </div>
+          <div class="calc-factor">1,46 g CO₂/app/an</div>
+        </div>
+        <div class="calc-body">
+          <div class="calc-formula-row">
+            <div class="formula-box">
+              <div class="formula">
+                CO₂ (g) = Nombre d'apps désinstallées × 1,46
+              </div>
+            </div>
+          </div>
+          <div class="calc-explanation">
+            <h4>Origine du facteur</h4>
+            <p>
+              Ce facteur correspond à l'empreinte annuelle d'une application
+              mobile inactive mais installée, incluant les mises à jour
+              automatiques, les notifications push et la synchronisation
+              en arrière-plan.
+            </p>
+            <div class="example-box">
+              <strong>Exemple :</strong> Désinstaller 20 applications
+              = 20 × 1,46 = <strong>29,2 g = 0,03 kg CO₂ évités par an</strong>
+            </div>
+          </div>
+          <div class="source-tag">
+            📚 Source : GreenIT.fr — Empreinte des applications mobiles (2022)
+          </div>
+        </div>
+      </div>
+
+      <!-- Tableau récapitulatif données -->
+      <div class="recap-table-wrapper">
+        <h3>📋 Récapitulatif — Facteurs DCD Données</h3>
+        <table class="recap-table">
+          <thead>
+            <tr>
+              <th>Type de donnée</th>
+              <th>Facteur CO₂</th>
+              <th>Unité</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>☁️ Go cloud supprimés</td>
+              <td class="factor">209,5 g</td>
+              <td>par Go / an</td>
+              <td>The Shift Project / GreenIT.fr</td>
+            </tr>
+            <tr>
+              <td>💾 Go local supprimés</td>
+              <td class="factor">3,2 g</td>
+              <td>par Go / an</td>
+              <td>ADEME / NégaOctet</td>
+            </tr>
+            <tr>
+              <td>📧 Emails supprimés</td>
+              <td class="factor">0,3 g</td>
+              <td>par email</td>
+              <td>ADEME 2019</td>
+            </tr>
+            <tr>
+              <td>📁 Fichiers cloud supprimés</td>
+              <td class="factor">8,0 g</td>
+              <td>par fichier</td>
+              <td>NégaOctet — estimé</td>
+            </tr>
+            <tr>
+              <td>💻 Fichiers locaux supprimés</td>
+              <td class="factor">2,0 g</td>
+              <td>par fichier</td>
+              <td>ADEME — estimé</td>
+            </tr>
+            <tr>
+              <td>📲 Apps désinstallées</td>
+              <td class="factor">1,46 g</td>
+              <td>par app / an</td>
+              <td>GreenIT.fr 2022</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ===== DCD RÉEMPLOI ===== -->
+    <section id="reemploi" class="calc-section">
+
+      <div class="section-title">
+        <span class="section-icon">♻️</span>
+        <h2>Digital Cleanup Réemploi</h2>
+      </div>
+
+      <div class="section-intro">
+        Le réemploi d'un équipement électronique évite la fabrication d'un
+        nouvel appareil. C'est l'action à l'impact carbone le plus fort car
+        <strong>80% de l'empreinte carbone d'un équipement numérique
+        est générée lors de sa fabrication</strong>.
+      </div>
+
+      <div class="principle-card">
+        <div class="principle-icon">💡</div>
+        <div class="principle-content">
+          <h3>Principe de calcul</h3>
+          <p>
+            Chaque équipement réemployé (don, réparation, protection ou
+            réutilisation) permet d'allonger sa durée de vie de
+            <strong>2 ans</strong>, évitant ainsi la fabrication d'un
+            nouvel équipement équivalent.
+          </p>
+          <div class="formula-box">
+            <div class="formula">
+              CO₂ évité (g) = Nombre d'équipements × Empreinte fabrication (g CO₂)
+            </div>
+          </div>
+          <p class="note">
+            ⚠️ Le facteur représente l'empreinte carbone de fabrication
+            de l'équipement, pas son empreinte totale sur cycle de vie.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tableau équipements réemploi -->
+      <div class="recap-table-wrapper">
+        <h3>📋 Facteurs d'émission — Équipements réemployés</h3>
+        <table class="recap-table">
+          <thead>
+            <tr>
+              <th>Équipement</th>
+              <th>Empreinte fabrication</th>
+              <th>Durée de vie allongée</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td>📲 Smartphone</td>
+              <td class="factor">30 kg CO₂</td>
+              <td>+ 2 ans</td>
+              <td>ADEME Base Empreinte®</td>
+            </tr>
+            <tr>
+              <td>💻 Ordinateur portable</td>
+              <td class="factor">156 kg CO₂</td>
+              <td>+ 2 ans</td>
+              <td>ADEME Base Empreinte®</td>
+            </tr>
+            <tr>
+              <td>🖥️ Ordinateur fixe</td>
+              <td class="factor">175 kg CO₂</td>
+              <td>+ 2 ans</td>
+              <td>ADEME Base Empreinte®</td>
+            </tr>
+            <tr>
+              <td>🖵 Écran</td>
+              <td class="factor">80 kg CO₂</td>
+              <td>+ 2 ans</td>
+              <td>ADEME Base Empreinte®</td>
+            </tr>
+            <tr>
+              <td>📱 Tablette</td>
+              <td class="factor">63 kg CO₂</td>
+              <td>+ 2 ans</td>
+              <td>ADEME Base Empreinte®</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Exemples réemploi -->
+      <div class="examples-grid">
+        <div class="example-card">
+          <div class="example-icon">📲</div>
+          <div class="example-title">10 smartphones réemployés</div>
+          <div class="example-calc">10 × 30 000 g</div>
+          <div class="example-result">= 300 kg CO₂ évités</div>
+        </div>
+        <div class="example-card">
+          <div class="example-icon">💻</div>
+          <div class="example-title">5 portables réemployés</div>
+          <div class="example-calc">5 × 156 000 g</div>
+          <div class="example-result">= 780 kg CO₂ évités</div>
+        </div>
+        <div class="example-card">
+          <div class="example-icon">🖥️</div>
+          <div class="example-title">3 fixes réemployés</div>
+          <div class="example-calc">3 × 175 000 g</div>
+          <div class="example-result">= 525 kg CO₂ évités</div>
+        </div>
+        <div class="example-card">
+          <div class="example-icon">🖵</div>
+          <div class="example-title">8 écrans réemployés</div>
+          <div class="example-calc">8 × 80 000 g</div>
+          <div class="example-result">= 640 kg CO₂ évités</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== DCD RECYCLAGE ===== -->
+    <section id="recyclage" class="calc-section">
+
+      <div class="section-title">
+        <span class="section-icon">🔋</span>
+        <h2>Digital Cleanup Recyclage</h2>
+      </div>
+
+      <div class="section-intro">
+        Le recyclage des équipements DEEE (Déchets d'Équipements Électriques
+        et Électroniques) permet de récupérer des matières premières et
+        d'éviter leur extraction. Les taux de valorisation sont issus
+        des données ADEME pour la catégorie "Petits appareils en mélange".
+      </div>
+
+      <!-- Taux ADEME -->
+      <div class="recyclage-grid">
+        <div class="recyclage-card reutilisee">
+          <div class="recyclage-pct">1%</div>
+          <div class="recyclage-label">Réutilisée</div>
+          <div class="recyclage-desc">
+            Pièces détachées directement réutilisables
+          </div>
+        </div>
+        <div class="recyclage-card recyclee">
+          <div class="recyclage-pct">76%</div>
+          <div class="recyclage-label">Recyclée</div>
+          <div class="recyclage-desc">
+            Matières transformées en nouvelles matières premières
+          </div>
+        </div>
+        <div class="recyclage-card valorisee">
+          <div class="recyclage-pct">12%</div>
+          <div class="recyclage-label">Valorisée</div>
+          <div class="recyclage-desc">
+            Valorisation énergétique (incinération avec récupération)
+          </div>
+        </div>
+        <div class="recyclage-card detruite">
+          <div class="recyclage-pct">11%</div>
+          <div class="recyclage-label">Détruite</div>
+          <div class="recyclage-desc">
+            Résidus non valorisables (enfouissement)
+          </div>
+        </div>
+      </div>
+
+      <div class="formula-box" style="margin-top:20px;">
+        <div class="formula-title">Formules de calcul</div>
+        <div class="formula">Matière réutilisée (kg) = Poids total DEEE × 0,01</div>
+        <div class="formula">Matière recyclée (kg) = Poids total DEEE × 0,76</div>
+        <div class="formula">Matière valorisée (kg) = Poids total DEEE × 0,12</div>
+        <div class="formula">Matière détruite (kg) = Poids total DEEE × 0,11</div>
+      </div>
+
+      <div class="source-tag" style="margin-top:16px;">
+        📚 Source : ADEME — Rapport annuel de la filière DEEE (2022)
+        — Catégorie : Petits appareils en mélange
+      </div>
+
+      <div class="info-box" style="margin-top:16px;">
+        <strong>ℹ️ Note :</strong> Le recyclage des DEEE ne génère pas
+        directement un calcul de CO₂ évité dans ce bilan car les données
+        collectées (poids en kg) ne permettent pas d'identifier précisément
+        les matières récupérées. Le bilan présente les tonnages par catégorie
+        de valorisation.
+      </div>
+
+    </section>
+
+    <!-- ===== ÉQUIVALENCES ===== -->
+    <section id="equivalences" class="calc-section">
+
+      <div class="section-title">
+        <span class="section-icon">🌍</span>
+        <h2>Équivalences grand public</h2>
+      </div>
+
+      <div class="section-intro">
+        Pour rendre le bilan carbone compréhensible par tous, les kg de CO₂
+        évités sont convertis en métriques du quotidien.
+      </div>
+
+      <div class="equiv-table-wrapper">
+		<table class="recap-table">
+		  <thead>
+		    <tr>
+		      <th>Équivalence</th>
+		      <th>Formule</th>
+		      <th>Facteur</th>
+		      <th>Source</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		      <td>🚗 Km en voiture</td>
+		      <td class="formula-cell">CO₂ (kg) ÷ 0,218</td>
+		      <td>0,218 kg CO₂/km</td>
+		      <td>ADEME — Voiture essence moyenne</td>
+		    </tr>
+		    <tr>
+		      <td>✈️ Allers-retours Paris/NYC</td>
+		      <td class="formula-cell">CO₂ (kg) ÷ 1 752</td>
+		      <td>1 752 kg CO₂/A-R</td>
+		      <td>ADEME — Vol long-courrier éco</td>
+		    </tr>
+		    <tr>
+		      <td>🚗 Trajets Lille-Marseille en voiture</td>
+		      <td class="formula-cell">CO₂ (kg) ÷ 218</td>
+		      <td>218 kg CO₂/trajet</td>
+		      <td>ADEME — 1 000 km × 0,218 kg/km</td>
+		    </tr>
+		    <tr>
+		      <td>🚄 Trajets Lille-Marseille en TGV</td>
+		      <td class="formula-cell">CO₂ (kg) ÷ 2,34</td>
+		      <td>2,34 kg CO₂/trajet</td>
+		      <td>ADEME — 1 000 km × 0,00234 kg/km</td>
+		    </tr>
+		    <tr>
+		      <td>📺 Heures de streaming</td>
+		      <td class="formula-cell">CO₂ (kg) ÷ 0,036</td>
+		      <td>36 g CO₂/heure</td>
+		      <td>The Shift Project (2019)</td>
+		    </tr>
+		    <tr>
+		      <td>🇫🇷 Empreinte annuelle française</td>
+		      <td class="formula-cell">CO₂ (tonnes) ÷ 9,9</td>
+		      <td>9,9 t CO₂/an/personne</td>
+		      <td>ADEME — Bilan carbone moyen 2022</td>
+		    </tr>
+		  </tbody>
+		</table>
+      </div>
+
+      <div class="example-full-box">
+        <h4>Exemple complet de calcul</h4>
+        <div class="example-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Données collectées :</strong>
+              500 Go cloud supprimés + 20 smartphones réemployés
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>CO₂ Données :</strong>
+              500 × 209,5 = 104 750 g = <strong>104,75 kg CO₂</strong>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>CO₂ Réemploi :</strong>
+              20 × 30 000 = 600 000 g = <strong>600 kg CO₂</strong>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong>Total :</strong>
+              104,75 + 600 = <strong>704,75 kg CO₂ évités</strong>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong>Équivalences :</strong>
+              704,75 ÷ 0,218 = <strong>3 232 km en voiture</strong>
+              | 704,75 ÷ 0,036 = <strong>19 576 h de streaming</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== SOURCES ===== -->
+    <section id="sources" class="calc-section">
+
+      <div class="section-title">
+        <span class="section-icon">📚</span>
+        <h2>Sources et références</h2>
+      </div>
+
+      <div class="sources-grid">
+
+        <div class="source-card">
+          <div class="source-logo">🏛️</div>
+          <div class="source-content">
+            <div class="source-name">ADEME — Base Empreinte®</div>
+            <div class="source-desc">
+              Base de données officielle française des facteurs d'émission.
+              Utilisée pour les empreintes de fabrication des équipements
+              numériques et les facteurs de transport.
+            </div>
+            <a href="https://base-empreinte.ademe.fr" target="_blank"
+               rel="noopener" class="source-link">
+              base-empreinte.ademe.fr →
+            </a>
+          </div>
+        </div>
+
+        <div class="source-card">
+          <div class="source-logo">📊</div>
+          <div class="source-content">
+            <div class="source-name">NégaOctet</div>
+            <div class="source-desc">
+              Référentiel de mesure de l'empreinte environnementale des
+              services numériques. Utilisé pour les facteurs de stockage
+              cloud et local.
+            </div>
+            <a href="https://codde.fr/nos-marques/negaoctet/referentiel" target="_blank"
+               rel="noopener" class="source-link">
+              negaoctet →
+            </a>
+          </div>
+        </div>
+
+        <div class="source-card">
+          <div class="source-logo">🌱</div>
+          <div class="source-content">
+            <div class="source-name">The Shift Project — Lean ICT</div>
+            <div class="source-desc">
+              Rapport "Pour une sobriété numérique" (2019). Utilisé pour
+              le facteur d'empreinte du stockage cloud (209,5 g CO₂/Go/an)
+              et le streaming vidéo.
+            </div>
+            <a href="https://theshiftproject.org/lean-ict" target="_blank"
+               rel="noopener" class="source-link">
+              theshiftproject.org →
+            </a>
+          </div>
+        </div>
+
+        <div class="source-card">
+          <div class="source-logo">🔋</div>
+          <div class="source-content">
+            <div class="source-name">ADEME — Filière DEEE</div>
+            <div class="source-desc">
+              Rapport annuel de la filière des Déchets d'Équipements
+              Électriques et Électroniques. Utilisé pour les taux de
+              valorisation des matières (1%, 76%, 12%, 11%).
+            </div>
+            <a href="https://filieres-rep.ademe.fr/filieres-REP/filiere-EEE" target="_blank"
+               rel="noopener" class="source-link">
+              ademe.fr →
+            </a>
+          </div>
+        </div>
+
+        <div class="source-card">
+          <div class="source-logo">🔋</div>
+          <div class="source-content">
+            <div class="source-name">ADEME — Filière DEEE</div>
+            <div class="source-desc">
+              Rapport annuel de la filière des Déchets d'Équipements
+              Électriques et Électroniques. Utilisé pour les taux de
+              valorisation des matières (1%, 76%, 12%, 11%).
+            </div>
+            <a href="https://filieres-rep.ademe.fr/filieres-REP/filiere-EEE" target="_blank"
+               rel="noopener" class="source-link">
+              ademe.fr →
+            </a>
+          </div>
+        </div>
+
+        <div class="source-card">
+          <div class="source-logo">🌍</div>
+          <div class="source-content">
+            <div class="source-name">ARCEP</div>
+            <div class="source-desc">
+              La production d’études chiffrées robustes et reposant sur des méthodes partagées permet d’avoir une vision d’ensemble et d’identifier les leviers majeurs sur lesquels agir. Elles participent à la prise de conscience collective et à l’objectivation des débats. Ces études et publications permettent ainsi de confirmer ou infirmer certaines intuitions sur l’impact environnemental du numérique.
+            </div>
+            <a href="hhttps://www.arcep.fr/nos-sujets/numerique-et-environnement.html" target="_blank"
+               rel="noopener" class="source-link">
+              arcep.fr →
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Avertissement -->
+      <div class="warning-box">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+          <h4>Limites et précautions d'usage</h4>
+          <ul>
+            <li>
+              Les facteurs d'émission sont des <strong>moyennes nationales</strong>
+              et peuvent varier selon les fournisseurs cloud, les pays et
+              les mix énergétiques.
+            </li>
+            <li>
+              Les données collectées sont <strong>déclaratives</strong> et
+              reposent sur les estimations des organisateurs de DCD.
+            </li>
+            <li>
+              Certains facteurs (fichiers cloud, fichiers locaux) sont des
+              <strong>estimations</strong> en l'absence de données précises
+              dans la littérature scientifique.
+            </li>
+            <li>
+              Ce bilan ne prend pas en compte l'effet rebond potentiel
+              (réutilisation de l'espace libéré pour stocker de nouvelles données).
+            </li>
+            <li>
+              Les calculs sont réalisés sur une base annuelle pour le stockage
+              (économie sur 1 an) et sur 2 ans pour le réemploi.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-logos">
+      <a href="https://digital-cleanup-day.fr" target="_blank" rel="noopener">
+        <img
+          src="logo_dcd.png"
+          alt="Digital Cleanup Day"
+          class="footer-logo-img"
+          onerror="this.style.display='none'"
+        />
+      </a>
+      <a href="https://institutnr.org" target="_blank" rel="noopener">
+        <img
+          src="logo_inr.jpg"
+          alt="Institut du Numérique Responsable"
+          class="footer-logo-img logo-inr"
+          onerror="this.style.display='none'"
+        />
+      </a>
+    </div>
+    <p>🌱 Digital Cleanup Day — Méthodologie des calculs © 2026</p>
+  </footer>
+
+</body>
+</html>

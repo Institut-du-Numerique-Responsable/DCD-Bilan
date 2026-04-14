@@ -1,0 +1,885 @@
+// ============================================================
+//  Digital Cleanup Day — Google Apps Script
+// ============================================================
+
+const SPREADSHEET_ID = '1_VQyx55YlNj8wLAp7nFCW1p0gPWqNoE1vzFhZyt-55Q';
+
+// ============================================================
+// FACTEURS CO2 — ADEME / Base Empreinte / ARCEP
+// ============================================================
+const CO2_FACTEURS = {
+  // DCD Données
+  goCloud:       209.5,  // g CO₂/Go/an — The Shift Project / GreenIT.fr
+  goLocal:       3.2,    // g CO₂/Go/an — ADEME / NégaOctet
+  email:         0.3,  // g CO₂/email supprimé — stockage évité
+                         // Calcul : 75 Ko × 209,5 g/Go/an ÷ 1 048 576
+                         // Source : ARCEP 2023 / ADEME Base Empreinte®
+  fichierCloud:  8.0,    // g CO₂/fichier cloud — NégaOctet estimé
+  fichierLocal:  2.0,    // g CO₂/fichier local — ADEME estimé
+  app:           1.46,   // g CO₂/app/an — GreenIT.fr
+  postSocial:    0.5,    // g CO₂/post supprimé — estimation
+
+  // DCD Réemploi — économie fabrication sur 2 ans (g CO₂/équipement)
+  smartphone:    30000,  // 30 kg CO₂ — ADEME Base Empreinte®
+  portable:      156000, // 156 kg CO₂ — ADEME Base Empreinte®
+  fixe:          175000, // 175 kg CO₂ — ADEME Base Empreinte®
+  ecran:         80000,  // 80 kg CO₂ — ADEME Base Empreinte®
+  tablette:      63000,  // 63 kg CO₂ — ADEME Base Empreinte®
+
+  // DCD Recyclage — CO₂ évité par kg de DEEE recyclé
+  deeeRecycle:   2500    // g CO₂/kg DEEE recyclé — ADEME estimé
+};
+
+// ============================================================
+// CALCUL CO2 CENTRALISÉ
+// ============================================================
+
+function calculerCO2(totaux) {
+
+  // Sécurisation des valeurs nulles
+  const t = {
+    goCloud:       Number(totaux.goCloud)       || 0,
+    goLocal:       Number(totaux.goLocal)       || 0,
+    emails:        Number(totaux.emails)        || 0,
+    fichiersCloud: Number(totaux.fichiersCloud) || 0,
+    fichiersLocal: Number(totaux.fichiersLocal) || 0,
+    apps:          Number(totaux.apps)          || 0,
+    posts:         Number(totaux.posts)         || 0,
+    smartphones:   Number(totaux.smartphones)   || 0,
+    portables:     Number(totaux.portables)     || 0,
+    fixes:         Number(totaux.fixes)         || 0,
+    ecrans:        Number(totaux.ecrans)        || 0,
+    tablettes:     Number(totaux.tablettes)     || 0,
+    poidsDeee:     Number(totaux.poidsDeee)     || 0
+  };
+
+  // ===== DCD DONNÉES =====
+  const co2GoCloud       = t.goCloud       * CO2_FACTEURS.goCloud;
+  const co2GoLocal       = t.goLocal       * CO2_FACTEURS.goLocal;
+  const co2Emails        = t.emails        * CO2_FACTEURS.email;
+  const co2FichiersCloud = t.fichiersCloud * CO2_FACTEURS.fichierCloud;
+  const co2FichiersLocal = t.fichiersLocal * CO2_FACTEURS.fichierLocal;
+  const co2Apps          = t.apps          * CO2_FACTEURS.app;
+  const co2Posts         = t.posts         * CO2_FACTEURS.postSocial;
+
+  const co2TotalDonnees = co2GoCloud + co2GoLocal + co2Emails
+                        + co2FichiersCloud + co2FichiersLocal
+                        + co2Apps + co2Posts;
+
+  // ===== DCD RÉEMPLOI =====
+  const co2Smartphones  = t.smartphones * CO2_FACTEURS.smartphone;
+  const co2Portables    = t.portables   * CO2_FACTEURS.portable;
+  const co2Fixes        = t.fixes       * CO2_FACTEURS.fixe;
+  const co2Ecrans       = t.ecrans      * CO2_FACTEURS.ecran;
+  const co2Tablettes    = t.tablettes   * CO2_FACTEURS.tablette;
+
+  const co2TotalReemploi = co2Smartphones + co2Portables + co2Fixes
+                         + co2Ecrans + co2Tablettes;
+
+  // ===== DCD RECYCLAGE =====
+  const poidsRecycle      = t.poidsDeee * 0.76;
+  const co2TotalRecyclage = poidsRecycle * CO2_FACTEURS.deeeRecycle;
+
+  // ===== TOTAL GLOBAL =====
+  const co2TotalGrammes = co2TotalDonnees + co2TotalReemploi + co2TotalRecyclage;
+  const co2KgEvite      = co2TotalGrammes / 1000;
+  const co2TEvite       = co2KgEvite / 1000;
+
+  // ===== DÉTAIL EN KG =====
+  const co2Detail = {
+    goCloud:        co2GoCloud        / 1000,
+    goLocal:        co2GoLocal        / 1000,
+    emails:         co2Emails         / 1000,
+    posts:          co2Posts          / 1000,
+    fichiersCloud:  co2FichiersCloud  / 1000,
+    fichiersLocal:  co2FichiersLocal  / 1000,
+    apps:           co2Apps           / 1000,
+    totalDonnees:   co2TotalDonnees   / 1000,
+    smartphones:    co2Smartphones    / 1000,
+    portables:      co2Portables      / 1000,
+    fixes:          co2Fixes          / 1000,
+    ecrans:         co2Ecrans         / 1000,
+    tablettes:      co2Tablettes      / 1000,
+    totalReemploi:  co2TotalReemploi  / 1000,
+    poidsRecycle:   poidsRecycle,
+    totalRecyclage: co2TotalRecyclage / 1000
+  };
+
+  // ===== ÉQUIVALENCES =====
+  const equivalences = {
+    kmVoiture:         Math.round(co2KgEvite / 0.218),
+    ARParisNYC:        (co2KgEvite / 1752).toFixed(2),
+    trajetsVoiture:    Math.round(co2KgEvite / 218),
+    trajetsTGV:        Math.round(co2KgEvite / 2.34),
+    heuresStreaming:   Math.round(co2KgEvite / 0.036),
+    empreinteFrancais: (co2TEvite / 9.9).toFixed(3)
+  };
+
+  // ===== RÉPARTITION EN % =====
+  const repartition = {
+    donneesPct:   co2TotalGrammes > 0
+      ? ((co2TotalDonnees   / co2TotalGrammes) * 100).toFixed(1) : '0.0',
+    reemploiPct:  co2TotalGrammes > 0
+      ? ((co2TotalReemploi  / co2TotalGrammes) * 100).toFixed(1) : '0.0',
+    recyclagePct: co2TotalGrammes > 0
+      ? ((co2TotalRecyclage / co2TotalGrammes) * 100).toFixed(1) : '0.0'
+  };
+
+  return { co2KgEvite, co2TEvite, co2Detail, equivalences, repartition };
+}
+
+// ============================================================
+// POINT D'ENTRÉE GET
+// ============================================================
+
+function doGet(e) {
+  const action = e.parameter ? (e.parameter.action || '') : '';
+
+  if (action === 'getDashboard') {
+    return getDashboardData(e);
+  }
+
+  if (action === 'getRawData') {
+    return getRawData(e);
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'ok', message: 'Script actif ✅' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================================
+// EXPORT DONNÉES BRUTES (format data.json)
+// Utilisé par le dashboard pour les filtres, top 5, et la page régions
+// ============================================================
+
+function getRawData(e) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    const result = {
+      exportDate: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+      general:         sheetToObjects(ss, 'Général',         ['date','date_evenement','cleanup_id','organisateur','type_structure','region','dept','personnes_atteintes','actions','nb_actions'], [0,1,2,3,4,5,6,8]),
+      sensibilisation: sheetToObjects(ss, 'Sensibilisation', ['date','cleanup_id','organisateur','region','dept','type_sensibilisation','participants_reels','audience_touchee'], [0,1,2,3,4,5]),
+      donnees:         sheetToObjects(ss, 'Données',         ['date','cleanup_id','organisateur','region','dept','emails','posts','fichiers_cloud','fichiers_local','apps','go_cloud','go_local'], [0,1,2,3,4]),
+      reemploi:        sheetToObjects(ss, 'Réemploi',        ['date','cleanup_id','organisateur','region','dept','type_equipement','don','reparation','protection','reutilisation'], [0,1,2,3,4,5]),
+      recyclage:       sheetToObjects(ss, 'Recyclage',       ['date','cleanup_id','organisateur','region','dept','type_equipement','quantite','poids_kg'], [0,1,2,3,4,5]),
+    };
+
+    return ContentService
+      .createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    console.error('Erreur getRawData:', err);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, message: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Convertit un onglet en tableau d'objets avec les clés fournies.
+ * @param {Spreadsheet} ss
+ * @param {string} sheetName - Nom de l'onglet
+ * @param {string[]} keys - Noms des champs pour chaque colonne
+ * @param {number[]} stringCols - Indices des colonnes à garder en string (dates, noms, types)
+ */
+function sheetToObjects(ss, sheetName, keys, stringCols) {
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return [];
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+
+  const stringSet = new Set(stringCols || []);
+  const rows = [];
+
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    // Ignorer lignes vides
+    if (!row[0] && !row[1]) continue;
+
+    var obj = {};
+    for (var j = 0; j < keys.length && j < row.length; j++) {
+      var val = row[j];
+      // Formater les dates
+      if (val instanceof Date) {
+        val = Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+      }
+      // Convertir en nombre sauf colonnes string
+      if (!stringSet.has(j) && typeof val === 'string' && val !== '') {
+        var num = Number(String(val).replace(',', '.'));
+        if (!isNaN(num)) val = num;
+      }
+      obj[keys[j]] = val === '' ? null : val;
+    }
+    // Calculer total pour réemploi
+    if (keys.indexOf('reparation') !== -1) {
+      obj.total = (Number(obj.don) || 0) + (Number(obj.reparation) || 0) +
+                  (Number(obj.protection) || 0) + (Number(obj.reutilisation) || 0);
+    }
+    rows.push(obj);
+  }
+  return rows;
+}
+
+// ============================================================
+// POINT D'ENTRÉE POST
+// ============================================================
+
+/**
+ * Nettoie une chaîne : longueur max, et préfixe les formules Sheets potentielles.
+ */
+function sanitizeStr(val, maxLen) {
+  var s = String(val || '').trim().slice(0, maxLen || 200);
+  // Protège contre l'injection de formules dans Google Sheets
+  if (/^[=+\-@]/.test(s)) s = "'" + s;
+  return s;
+}
+
+function doPost(e) {
+  try {
+    let data;
+    if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+    } else if (e.parameter && e.parameter.data) {
+      data = JSON.parse(e.parameter.data);
+    } else {
+      throw new Error('Aucune donnée reçue');
+    }
+
+    // Validation de structure minimale
+    if (!data || typeof data !== 'object' || !data.metadata || typeof data.metadata !== 'object') {
+      throw new Error('Payload invalide');
+    }
+    if (!Array.isArray(data.metadata.actionsRealisees)) {
+      throw new Error('actionsRealisees doit être un tableau');
+    }
+
+    console.log('Données reçues metadata:', JSON.stringify(data.metadata));
+
+    const ss          = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const date        = data.metadata.dateSubmission || new Date().toISOString();
+    const eventDate   = sanitizeStr(data.metadata.eventDate,  20);
+    const cleanupId   = sanitizeStr(data.metadata.cleanupId,  50);
+    const organizer   = sanitizeStr(data.metadata.organizer, 200);
+    const structure   = sanitizeStr(data.metadata.structureType, 100);
+    const region      = sanitizeStr(data.metadata.region,    100);
+    const departement = sanitizeStr(data.metadata.departement, 100);
+    const actions     = data.metadata.actionsRealisees.map(function(a){ return sanitizeStr(a, 50); }).join(', ');
+    const personneattainte = Math.max(0, parseInt(data.metadata.personneattainte, 10) || 0);
+
+    writeGeneral(ss, date, eventDate, cleanupId, organizer,
+                 structure, region, departement, personneattainte, actions);
+
+    if (data.sensibilisation) writeSensibilisation(ss, date, cleanupId, organizer, region, departement, data.sensibilisation);
+    if (data.reemploi)        writeReemploi(ss, date, cleanupId, organizer, region, departement, data.reemploi);
+    if (data.donnees)         writeDonnees(ss, date, cleanupId, organizer, region, departement, data.donnees);
+    if (data.recyclage)       writeRecyclage(ss, date, cleanupId, organizer, region, departement, data.recyclage);
+
+    return buildResponse(true, 'Données enregistrées avec succès !');
+
+  } catch (error) {
+    console.error('Erreur doPost:', error);
+    return buildResponse(false, 'Erreur : ' + error.message);
+  }
+}
+
+// ============================================================
+// ÉCRITURE ONGLETS
+// ============================================================
+
+function writeGeneral(ss, date, eventDate, cleanupId, organizer, structure, region, departement, personneattainte, actions) {
+  const sheet = ss.getSheetByName('Général');
+  if (!sheet) throw new Error('Onglet "Général" introuvable');
+
+  const headers = sheet.getRange(1, 1, 1, 10).getValues()[0];
+  if (!headers[0] || headers[0] === '') {
+    sheet.getRange(1, 1, 1, 10).setValues([[
+      'Date soumission', 'Date événement', 'Cleanup ID', 'Organisateur',
+      'Type de structure', 'Région', 'Département',
+      'Personnes atteintes', 'Actions réalisées', 'Nb actions'
+    ]]);
+  }
+
+  sheet.appendRow([
+    formatDate(date), eventDate, cleanupId, organizer,
+    structure, region, departement, personneattainte,
+    actions, actions.split(',').length
+  ]);
+}
+
+function writeSensibilisation(ss, date, cleanupId, organizer, region, departement, data) {
+  const sheet = ss.getSheetByName('Sensibilisation');
+  if (!sheet) throw new Error('Onglet "Sensibilisation" introuvable');
+
+  const types = [
+    { key: 'webinaire',        label: 'Webinaire de sensibilisation' },
+    { key: 'fresqueNumerique', label: 'Fresque du numérique' },
+    { key: 'jeuxNumeville',    label: 'Jeux Numéville' },
+    { key: 'jeuxDowino',       label: 'Jeux Dowino' },
+    { key: 'jeuxTheWokies',    label: 'Jeux The Wokies' },
+    { key: 'autreFormat',      label: null }
+  ];
+
+  types.forEach(type => {
+    const entry = data[type.key];
+    if (!entry || (entry.participants === 0 && entry.audience === 0)) return;
+    const typeLabel = type.key === 'autreFormat'
+      ? ('Autre : ' + (entry.label || 'Non précisé'))
+      : type.label;
+    sheet.appendRow([
+      formatDate(date), cleanupId, organizer, region, departement,
+      typeLabel, entry.participants || 0, entry.audience || 0
+    ]);
+  });
+}
+
+function writeReemploi(ss, date, cleanupId, organizer, region, departement, data) {
+  const sheet = ss.getSheetByName('Réemploi');
+  if (!sheet) throw new Error('Onglet "Réemploi" introuvable');
+
+  const equipements = [
+    { key: 'ordinateurFixe',     label: 'Ordinateur fixe' },
+    { key: 'ecran',              label: 'Écran' },
+    { key: 'ordinateurPortable', label: 'Ordinateur portable' },
+    { key: 'tablette',           label: 'Tablette' },
+    { key: 'smartphone',         label: 'Smartphone' }
+  ];
+
+  equipements.forEach(eq => {
+    const entry = data[eq.key];
+    if (!entry) return;
+    const total = (entry.don||0) + (entry.reparation||0)
+                + (entry.protection||0) + (entry.reutilisation||0);
+    if (total === 0) return;
+    sheet.appendRow([
+      formatDate(date), cleanupId, organizer, region, departement, eq.label,
+      entry.don||0, entry.reparation||0, entry.protection||0, entry.reutilisation||0
+    ]);
+  });
+}
+
+function writeDonnees(ss, date, cleanupId, organizer, region, departement, data) {
+  const sheet = ss.getSheetByName('Données');
+  if (!sheet) throw new Error('Onglet "Données" introuvable');
+
+  sheet.appendRow([
+    formatDate(date), cleanupId, organizer, region, departement,
+    data.fichiersSupprimes?.emails       || 0,  // col[5]
+    data.fichiersSupprimes?.postsSociaux || 0,  // col[6]
+    data.fichiersSupprimes?.cloud        || 0,  // col[7]
+    data.fichiersSupprimes?.local        || 0,  // col[8]
+    data.applicationsDesinstallees       || 0,  // col[9]
+    data.goRecuperes?.cloud              || 0,  // col[10]
+    data.goRecuperes?.local              || 0   // col[11]
+  ]);
+}
+
+function writeRecyclage(ss, date, cleanupId, organizer, region, departement, data) {
+  const sheet = ss.getSheetByName('Recyclage');
+  if (!sheet) throw new Error('Onglet "Recyclage" introuvable');
+
+  const equipements = [
+    { key: 'ordinateurFixe',     label: 'Ordinateur fixe' },
+    { key: 'ecran',              label: 'Écran' },
+    { key: 'ordinateurPortable', label: 'Ordinateur portable' },
+    { key: 'tablette',           label: 'Tablette' },
+    { key: 'smartphone',         label: 'Smartphone' },
+    { key: 'divers',             label: 'Divers' }
+  ];
+
+  equipements.forEach(eq => {
+    const entry = data[eq.key];
+    if (!entry || ((entry.quantite||0) === 0 && (entry.poidsKg||0) === 0)) return;
+    sheet.appendRow([
+      formatDate(date), cleanupId, organizer, region, departement,
+      eq.label, entry.quantite||0, entry.poidsKg||0
+    ]);
+  });
+}
+
+// ============================================================
+// LECTURE DES DONNÉES BRUTES
+// ============================================================
+
+function lireDonneesBrutes(ss, filterRegion, filterStructure) {
+  const genData  = ss.getSheetByName('Général').getDataRange().getValues();
+  const sensData = ss.getSheetByName('Sensibilisation').getDataRange().getValues();
+  const reData   = ss.getSheetByName('Réemploi').getDataRange().getValues();
+  const donData  = ss.getSheetByName('Données').getDataRange().getValues();
+  const recData  = ss.getSheetByName('Recyclage').getDataRange().getValues();
+
+  // Filtrage
+  const filteredIds = new Set();
+  const useFilter   = filterRegion || filterStructure;
+
+  for (let i = 1; i < genData.length; i++) {
+    const structure = String(genData[i][4] || '');
+    const region    = String(genData[i][5] || '');
+    if (filterRegion    && region    !== filterRegion)    continue;
+    if (filterStructure && structure !== filterStructure) continue;
+    filteredIds.add(String(genData[i][2]));
+  }
+
+  function matchesFilter(row, idCol) {
+    if (!useFilter) return true;
+    return filteredIds.has(String(row[idCol]));
+  }
+
+  // ===== GÉNÉRAL =====
+  let totalDCD = 0;
+  const typologies = {}, regions = {};
+  for (let i = 1; i < genData.length; i++) {
+    if (useFilter && !filteredIds.has(String(genData[i][2]))) continue;
+    totalDCD++;
+    const t = String(genData[i][4] || 'Non renseigné');
+    const r = String(genData[i][5] || 'Non renseignée');
+    typologies[t] = (typologies[t] || 0) + 1;
+    regions[r]    = (regions[r]    || 0) + 1;
+  }
+
+  // ===== SENSIBILISATION =====
+  let totalParticipants = 0, totalAudience = 0;
+  for (let i = 1; i < sensData.length; i++) {
+    if (!matchesFilter(sensData[i], 1)) continue;
+    totalParticipants += Number(sensData[i][6]) || 0;
+    totalAudience     += Number(sensData[i][7]) || 0;
+  }
+
+  // ===== DONNÉES =====
+  // Colonnes : [0]Date [1]ID [2]Organisateur [3]Région [4]Département
+  //            [5]Emails [6]Posts [7]FichiersCloud [8]FichiersLocal
+  //            [9]Apps [10]GoCloud [11]GoLocal
+  let totalEmailsSup     = 0;
+  let totalPostsSup      = 0;
+  let totalFichiersCloud = 0;
+  let totalFichiersLocal = 0;
+  let totalAppsSup       = 0;
+  let totalGoCloud       = 0;
+  let totalGoLocal       = 0;
+
+  for (let i = 1; i < donData.length; i++) {
+    if (!matchesFilter(donData[i], 1)) continue;
+
+    // ⚠️ Vérification que ce ne sont pas des en-têtes
+    if (typeof donData[i][5] === 'string' && isNaN(Number(donData[i][5]))) continue;
+
+    totalEmailsSup     += Number(donData[i][5])  || 0;
+    totalPostsSup      += Number(donData[i][6])  || 0;
+    totalFichiersCloud += Number(donData[i][7])  || 0;
+    totalFichiersLocal += Number(donData[i][8])  || 0;
+    totalAppsSup       += Number(donData[i][9])  || 0;
+    totalGoCloud       += Number(donData[i][10]) || 0;
+    totalGoLocal       += Number(donData[i][11]) || 0;
+  }
+
+  const totalFichiersSup = totalFichiersCloud + totalFichiersLocal;
+  const totalGo          = totalGoCloud + totalGoLocal;
+
+  // ===== RÉEMPLOI =====
+  let totalReemploi    = 0;
+  let totalSmartphones = 0, totalPortables = 0;
+  let totalFixes       = 0, totalEcrans    = 0, totalTablettes = 0;
+
+  for (let i = 1; i < reData.length; i++) {
+    if (!matchesFilter(reData[i], 1)) continue;
+    const label = String(reData[i][5] || '');
+    const total = (Number(reData[i][6]) || 0) + (Number(reData[i][7]) || 0)
+                + (Number(reData[i][8]) || 0) + (Number(reData[i][9]) || 0);
+    totalReemploi += total;
+    if (label === 'Smartphone')          totalSmartphones += total;
+    if (label === 'Ordinateur portable') totalPortables   += total;
+    if (label === 'Ordinateur fixe')     totalFixes       += total;
+    if (label === 'Écran')               totalEcrans      += total;
+    if (label === 'Tablette')            totalTablettes   += total;
+  }
+
+  // ===== RECYCLAGE =====
+  let totalPoidsKg    = 0;
+  let poidsFixe       = 0, poidsPortable   = 0;
+  let poidsEcran      = 0, poidsSmartphone = 0;
+
+  for (let i = 1; i < recData.length; i++) {
+    if (!matchesFilter(recData[i], 1)) continue;
+    const label = String(recData[i][5] || '');
+    const poids = Number(recData[i][7]) || 0;
+    totalPoidsKg += poids;
+    if (label === 'Ordinateur fixe')     poidsFixe       += poids;
+    if (label === 'Ordinateur portable') poidsPortable   += poids;
+    if (label === 'Écran')               poidsEcran      += poids;
+    if (label === 'Smartphone')          poidsSmartphone += poids;
+  }
+
+  const totalPoidsTonnes  = totalPoidsKg / 1000;
+  const matiereReutilisee = totalPoidsKg * 0.01;
+  const matiereRecyclee   = totalPoidsKg * 0.76;
+  const matiereValorisee  = totalPoidsKg * 0.12;
+  const matiereDetruite   = totalPoidsKg * 0.11;
+
+  return {
+    totalDCD, typologies, regions,
+    totalParticipants, totalAudience,
+    totalEmailsSup, totalPostsSup,
+    totalFichiersCloud, totalFichiersLocal, totalFichiersSup,
+    totalAppsSup, totalGoCloud, totalGoLocal, totalGo,
+    totalReemploi, totalSmartphones, totalPortables,
+    totalFixes, totalEcrans, totalTablettes,
+    totalPoidsKg, totalPoidsTonnes,
+    matiereReutilisee, matiereRecyclee, matiereValorisee, matiereDetruite,
+    poidsFixe, poidsPortable, poidsEcran, poidsSmartphone
+  };
+}
+
+// ============================================================
+// API DASHBOARD
+// ============================================================
+
+function getDashboardData(e) {
+  try {
+    const ss              = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const filterRegion    = e.parameter.region    || '';
+    const filterStructure = e.parameter.structure || '';
+
+    const b   = lireDonneesBrutes(ss, filterRegion, filterStructure);
+    const co2 = calculerCO2({
+      goCloud:       b.totalGoCloud,
+      goLocal:       b.totalGoLocal,
+      emails:        b.totalEmailsSup,
+      fichiersCloud: b.totalFichiersCloud,
+      fichiersLocal: b.totalFichiersLocal,
+      apps:          b.totalAppsSup,
+      posts:         b.totalPostsSup,
+      smartphones:   b.totalSmartphones,
+      portables:     b.totalPortables,
+      fixes:         b.totalFixes,
+      ecrans:        b.totalEcrans,
+      tablettes:     b.totalTablettes,
+      poidsDeee:     b.totalPoidsKg
+    });
+
+    // ===== DEBUG =====
+    console.log('=== getDashboardData ===');
+    console.log('Emails :', b.totalEmailsSup);
+    console.log('Fixes  :', b.totalFixes, '| Écrans :', b.totalEcrans);
+    console.log('CO₂ total (kg) :', co2.co2KgEvite);
+    console.log('CO₂ données    :', co2.co2Detail.totalDonnees);
+    console.log('CO₂ réemploi   :', co2.co2Detail.totalReemploi);
+    console.log('CO₂ recyclage  :', co2.co2Detail.totalRecyclage);
+    console.log('Répartition    :', JSON.stringify(co2.repartition));
+
+    // ===== CONSTRUCTION EXPLICITE =====
+    const dashboard = {
+      // Participation
+      totalDCD:           b.totalDCD,
+      totalParticipants:  b.totalParticipants,
+      totalAudience:      b.totalAudience,
+
+      // Données
+      totalEmailsSup:     b.totalEmailsSup,
+      totalPostsSup:      b.totalPostsSup,
+      totalFichiersSup:   b.totalFichiersSup,
+      totalFichiersCloud: b.totalFichiersCloud,
+      totalFichiersLocal: b.totalFichiersLocal,
+      totalAppsSup:       b.totalAppsSup,
+      totalGoCloud:       b.totalGoCloud,
+      totalGoLocal:       b.totalGoLocal,
+      totalGo:            b.totalGo,
+
+      // Réemploi
+      totalReemploi:      b.totalReemploi,
+      totalSmartphones:   b.totalSmartphones,
+      totalPortables:     b.totalPortables,
+      totalFixes:         b.totalFixes,
+      totalEcrans:        b.totalEcrans,
+      totalTablettes:     b.totalTablettes,
+
+      // Recyclage
+      totalPoidsKg:       b.totalPoidsKg,
+      totalPoidsTonnes:   b.totalPoidsTonnes,
+      matiereReutilisee:  b.matiereReutilisee,
+      matiereRecyclee:    b.matiereRecyclee,
+      matiereValorisee:   b.matiereValorisee,
+      matiereDetruite:    b.matiereDetruite,
+      poidsFixe:          b.poidsFixe,
+      poidsPortable:      b.poidsPortable,
+      poidsEcran:         b.poidsEcran,
+      poidsSmartphone:    b.poidsSmartphone,
+
+      // CO2 — nommés explicitement (pas de spread)
+      co2KgEvite:         co2.co2KgEvite,
+      co2TEvite:          co2.co2TEvite,
+      co2Detail:          co2.co2Detail,
+
+      // Équivalences — nommées explicitement
+      kmVoiture:          co2.equivalences.kmVoiture,
+      ARParisNYC:         co2.equivalences.ARParisNYC,
+      trajetsVoiture:     co2.equivalences.trajetsVoiture,
+      trajetsTGV:         co2.equivalences.trajetsTGV,
+      heuresStreaming:    co2.equivalences.heuresStreaming,
+      empreinteFrancais:  co2.equivalences.empreinteFrancais,
+
+      // Répartition
+      repartition:        co2.repartition,
+
+      // Géographie
+      typologies:         b.typologies,
+      regions:            b.regions
+    };
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true, dashboard }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    console.error('Erreur getDashboardData:', err);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, message: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ============================================================
+// ONGLET DASHBOARD SHEETS
+// ============================================================
+
+function updateDashboard(ss) {
+  let dash = ss.getSheetByName('Dashboard');
+  if (!dash) dash = ss.insertSheet('Dashboard');
+  dash.clearContents();
+
+  const b   = lireDonneesBrutes(ss, '', '');
+  const co2 = calculerCO2({
+    goCloud:       b.totalGoCloud,
+    goLocal:       b.totalGoLocal,
+    emails:        b.totalEmailsSup,
+    fichiersCloud: b.totalFichiersCloud,
+    fichiersLocal: b.totalFichiersLocal,
+    apps:          b.totalAppsSup,
+    posts:         b.totalPostsSup      || 0,
+    smartphones:   b.totalSmartphones,
+    portables:     b.totalPortables,
+    fixes:         b.totalFixes,
+    ecrans:        b.totalEcrans,
+    tablettes:     b.totalTablettes,
+    poidsDeee:     b.totalPoidsKg
+  });
+
+  const eq = co2.equivalences;
+  const d  = co2.co2Detail;
+  const r  = co2.repartition;
+
+  const rows = [
+    ['=== BILAN DIGITAL CLEANUP DAY ===', ''],
+    ['Mis à jour le', formatDate(new Date().toISOString())],
+    ['', ''],
+
+    ['=== PARTICIPATION ===', ''],
+    ['Nombre total de DCD organisés',  b.totalDCD],
+    ['Participants aux actions',        b.totalParticipants],
+    ['Audience totale sensibilisée',    b.totalAudience],
+    ['', ''],
+
+    ['=== TYPOLOGIES ===', ''],
+    ...Object.entries(b.typologies).map(([k,v]) => [k, v]),
+    ['', ''],
+
+    ['=== GÉOGRAPHIE ===', ''],
+    ...Object.entries(b.regions).map(([k,v]) => [k, v]),
+    ['', ''],
+
+    ['=== DCD DONNÉES ===', ''],
+    ['Emails supprimés',              b.totalEmailsSup],
+    ['Posts sociaux supprimés',       b.totalPostsSup || 0],
+    ['Fichiers cloud supprimés',      b.totalFichiersCloud],
+    ['Fichiers locaux supprimés',     b.totalFichiersLocal],
+    ['Applications désinstallées',    b.totalAppsSup],
+    ['Go cloud supprimés',            b.totalGoCloud.toFixed(2)],
+    ['Go local supprimés',            b.totalGoLocal.toFixed(2)],
+    ['Total Go supprimés',            b.totalGo.toFixed(2)],
+    ['', ''],
+
+    ['=== DCD RÉEMPLOI ===', ''],
+    ['Total équipements réemployés',     b.totalReemploi],
+    ['Smartphones réemployés',           b.totalSmartphones],
+    ['Ordinateurs portables réemployés', b.totalPortables],
+    ['Ordinateurs fixes réemployés',     b.totalFixes],
+    ['Écrans réemployés',                b.totalEcrans],
+    ['Tablettes réemployées',            b.totalTablettes],
+    ['', ''],
+
+    ['=== DCD RECYCLAGE ===', ''],
+    ['Poids total collecté (kg)',     b.totalPoidsKg.toFixed(2)],
+    ['Poids total collecté (tonnes)', b.totalPoidsTonnes.toFixed(3)],
+    ['Ordinateurs fixes (kg)',        b.poidsFixe.toFixed(2)],
+    ['Ordinateurs portables (kg)',    b.poidsPortable.toFixed(2)],
+    ['Écrans (kg)',                   b.poidsEcran.toFixed(2)],
+    ['Smartphones (kg)',              b.poidsSmartphone.toFixed(2)],
+    ['Matière réutilisée 1% (kg)',    b.matiereReutilisee.toFixed(2)],
+    ['Matière recyclée 76% (kg)',     b.matiereRecyclee.toFixed(2)],
+    ['Matière valorisée 12% (kg)',    b.matiereValorisee.toFixed(2)],
+    ['Matière détruite 11% (kg)',     b.matiereDetruite.toFixed(2)],
+    ['', ''],
+
+    ['=== IMPACT CO2 ENRICHI ===', ''],
+    ['--- DCD Données ---', ''],
+    ['Go cloud (kg CO₂)',              d.goCloud.toFixed(3)],
+    ['Go local (kg CO₂)',              d.goLocal.toFixed(3)],
+    ['Emails (kg CO₂)',                d.emails.toFixed(3)],
+    ['Posts sociaux (kg CO₂)',         d.posts.toFixed(3)],
+    ['Fichiers cloud (kg CO₂)',        d.fichiersCloud.toFixed(3)],
+    ['Fichiers locaux (kg CO₂)',       d.fichiersLocal.toFixed(3)],
+    ['Apps désinstallées (kg CO₂)',    d.apps.toFixed(3)],
+    ['TOTAL DCD Données (kg CO₂)',     d.totalDonnees.toFixed(3)],
+    ['', ''],
+    ['--- DCD Réemploi ---', ''],
+    ['Smartphones (kg CO₂)',           d.smartphones.toFixed(3)],
+    ['Ordinateurs portables (kg CO₂)', d.portables.toFixed(3)],
+    ['Ordinateurs fixes (kg CO₂)',     d.fixes.toFixed(3)],
+    ['Écrans (kg CO₂)',                d.ecrans.toFixed(3)],
+    ['Tablettes (kg CO₂)',             d.tablettes.toFixed(3)],
+    ['TOTAL DCD Réemploi (kg CO₂)',    d.totalReemploi.toFixed(3)],
+    ['', ''],
+    ['--- DCD Recyclage ---', ''],
+    ['Poids DEEE recyclé (kg)',        d.poidsRecycle.toFixed(2)],
+    ['TOTAL DCD Recyclage (kg CO₂)',   d.totalRecyclage.toFixed(3)],
+    ['', ''],
+    ['TOTAL GLOBAL CO₂ évité (kg)',    co2.co2KgEvite.toFixed(3)],
+    ['TOTAL GLOBAL CO₂ évité (tonnes)',co2.co2TEvite.toFixed(6)],
+    ['', ''],
+    ['--- Répartition ---', ''],
+    ['Part DCD Données (%)',           r.donneesPct],
+    ['Part DCD Réemploi (%)',          r.reemploiPct],
+    ['Part DCD Recyclage (%)',         r.recyclagePct],
+    ['', ''],
+
+    ['=== ÉQUIVALENCES ===', ''],
+    ['Km en voiture évités',              eq.kmVoiture],
+    ['Allers-retours Paris/NYC',           eq.ARParisNYC],
+    ['Trajets Lille-Marseille (voiture)',  eq.trajetsVoiture],
+    ['Trajets Lille-Marseille (TGV)',      eq.trajetsTGV],
+    ['Heures de streaming évitées',        eq.heuresStreaming],
+    ['Empreinte annuelle d\'un Français',  eq.empreinteFrancais],
+  ];
+
+  dash.getRange(1, 1, rows.length, 2).setValues(rows);
+}
+
+// ============================================================
+// UTILITAIRES
+// ============================================================
+
+function formatDate(isoString) {
+  try {
+    const d = new Date(isoString);
+    return Utilities.formatDate(d, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm:ss');
+  } catch(e) { return isoString; }
+}
+
+function buildResponse(success, message) {
+  return ContentService
+    .createTextOutput(JSON.stringify({ success, message }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================================
+// DEBUG — Vérifier les données brutes
+// ============================================================
+
+function debugDonnees() {
+  const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('Données');
+  const data  = sheet.getDataRange().getValues();
+
+  console.log('=== ONGLET DONNÉES ===');
+  console.log('Nombre de lignes :', data.length);
+  for (let i = 0; i < Math.min(data.length, 10); i++) {
+    console.log('Ligne', i, ':', JSON.stringify(data[i]));
+  }
+}
+
+function testDashboard() {
+  const ss  = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const b   = lireDonneesBrutes(ss, '', '');
+  const co2 = calculerCO2({
+    goCloud:       b.totalGoCloud,
+    goLocal:       b.totalGoLocal,
+    emails:        b.totalEmailsSup,
+    fichiersCloud: b.totalFichiersCloud,
+    fichiersLocal: b.totalFichiersLocal,
+    apps:          b.totalAppsSup,
+    posts:         b.totalPostsSup || 0,
+    smartphones:   b.totalSmartphones,
+    portables:     b.totalPortables,
+    fixes:         b.totalFixes,
+    ecrans:        b.totalEcrans,
+    tablettes:     b.totalTablettes,
+    poidsDeee:     b.totalPoidsKg
+  });
+
+  console.log('=== TEST DASHBOARD ===');
+  console.log('Total DCD      :', b.totalDCD);
+  console.log('Emails         :', b.totalEmailsSup);
+  console.log('Fixes          :', b.totalFixes);
+  console.log('Écrans         :', b.totalEcrans);
+  console.log('CO₂ total (kg) :', co2.co2KgEvite.toFixed(3));
+  console.log('CO₂ données    :', co2.co2Detail.totalDonnees.toFixed(3));
+  console.log('CO₂ réemploi   :', co2.co2Detail.totalReemploi.toFixed(3));
+  console.log('CO₂ recyclage  :', co2.co2Detail.totalRecyclage.toFixed(3));
+  console.log('Répartition    :', JSON.stringify(co2.repartition));
+  console.log('Équivalences   :', JSON.stringify(co2.equivalences));
+}
+
+function testInsert() {
+  const fakeData = {
+    postData: {
+      contents: JSON.stringify({
+        metadata: {
+          dateSubmission:    new Date().toISOString(),
+          eventDate:         '2026-03-15',
+          cleanupId:         'TEST-002',
+          organizer:         'Organisation Test',
+          structureType:     'Entreprise',
+          region:            'Île-de-France',
+          departement:       'Paris (75)',
+          personneattainte: 0,
+          actionsRealisees:  ['sensibilisation', 'donnees', 'reemploi', 'recyclage']
+        },
+        sensibilisation: {
+          webinaire:        { participants: 30,  audience: 150 },
+          fresqueNumerique: { participants: 12,  audience: 12  },
+          jeuxNumeville:    { participants: 0,   audience: 0   },
+          jeuxDowino:       { participants: 0,   audience: 0   },
+          jeuxTheWokies:    { participants: 0,   audience: 0   },
+          autreFormat:      { label: 'Atelier', participants: 8, audience: 8 }
+        },
+        donnees: {
+          fichiersSupprimes: {
+            emails: 500, postsSociaux: 20, cloud: 200, local: 150
+          },
+          applicationsDesinstallees: 15,
+          goRecuperes: { cloud: 12.5, local: 8.3 }
+        },
+        reemploi: {
+          ordinateurFixe:     { don: 2,  reparation: 1, protection: 0, reutilisation: 1 },
+          ecran:              { don: 3,  reparation: 0, protection: 0, reutilisation: 2 },
+          ordinateurPortable: { don: 5,  reparation: 2, protection: 1, reutilisation: 3 },
+          tablette:           { don: 1,  reparation: 0, protection: 0, reutilisation: 1 },
+          smartphone:         { don: 10, reparation: 3, protection: 2, reutilisation: 5 }
+        },
+        recyclage: {
+          ordinateurFixe:     { quantite: 5,  poidsKg: 30  },
+          ecran:              { quantite: 3,  poidsKg: 9   },
+          ordinateurPortable: { quantite: 7,  poidsKg: 14  },
+          tablette:           { quantite: 2,  poidsKg: 1   },
+          smartphone:         { quantite: 10, poidsKg: 2   },
+          divers:             { quantite: 15, poidsKg: 5   }
+        }
+      })
+    }
+  };
+  const result = doPost(fakeData);
+  console.log('Résultat :', result.getContent());
+}
+

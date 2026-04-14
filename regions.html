@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' https://cdn.jsdelivr.net;
+             connect-src https://script.google.com https://script.googleusercontent.com https://raw.githubusercontent.com;
+             img-src 'self' data:;
+             style-src 'self' 'unsafe-inline'">
+  <title>Participation par région — Digital Cleanup Day</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+          integrity="sha384-JUh163oCRItcbPme8pYnROHQMC6fNKTBWtRG3I3I0erJkzNgL7uxKlNwcrcFKeqF"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"
+          integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"
+          integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ========== LOADER ========== -->
+  <div id="loader-dash">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Chargement des données...</p>
+    </div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="header-content">
+      <div class="header-title-row">
+        <img
+          src="logo_dcd.png"
+          alt="Digital Cleanup Day"
+          class="header-title-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="header-title-text">
+          <h1>Participation par région</h1>
+          <p>Digital Cleanup Day — Bilan 2026</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main>
+
+    <!-- ===== NAVIGATION ===== -->
+    <div class="filters-bar">
+      <a href="dashboard.html" class="btn btn-primary">
+        ← Tableau de bord
+      </a>
+      <a href="index.html" class="btn btn-secondary">
+        📋 Formulaire
+      </a>
+      <a href="methodologie.html" class="btn btn-secondary">
+        🧮 Méthodologie
+      </a>
+    </div>
+
+    <!-- ===== KPIs NATIONAUX ===== -->
+    <div class="section-title">
+      <span class="section-icon">🇫🇷</span>
+      <h2>Vue nationale</h2>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card pink">
+        <div class="kpi-icon">🗺️</div>
+        <div class="kpi-value" id="kpi-nb-regions">—</div>
+        <div class="kpi-label">Régions participantes</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">🌱</div>
+        <div class="kpi-value" id="kpi-nb-dcd">—</div>
+        <div class="kpi-label">DCD remontés</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-icon">🏢</div>
+        <div class="kpi-value" id="kpi-nb-orgs">—</div>
+        <div class="kpi-label">Organisateurs distincts</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-icon">🌍</div>
+        <div class="kpi-value" id="kpi-co2-total">—</div>
+        <div class="kpi-label">kg CO₂ évités au total</div>
+      </div>
+    </div>
+
+    <!-- ===== CARTE CHOROPLÈTHE ===== -->
+    <div class="section-title">
+      <span class="section-icon">🗺️</span>
+      <h2>Carte de participation</h2>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:28px;position:relative">
+      <div id="map-tooltip" style="
+        position:absolute;pointer-events:none;background:rgba(30,30,40,0.92);
+        color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;
+        line-height:1.5;display:none;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.25)">
+      </div>
+      <svg id="map-france" style="width:100%;display:block"></svg>
+      <div id="map-legend" style="display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;color:#6b7280">
+        <span>0%</span>
+        <div id="map-legend-gradient" style="flex:1;height:10px;border-radius:4px"></div>
+        <span id="map-legend-max">—</span>
+      </div>
+    </div>
+
+    <!-- ===== GRAPHIQUE RÉGIONS ===== -->
+    <div class="section-title">
+      <span class="section-icon">📊</span>
+      <h2>Nombre de DCD par région</h2>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:28px">
+      <canvas id="chart-regions-full"></canvas>
+    </div>
+
+    <!-- ===== TABLEAU DÉTAILLÉ ===== -->
+    <div class="section-title">
+      <span class="section-icon">📋</span>
+      <h2>Détail par région</h2>
+    </div>
+
+    <div class="co2-detail-card" style="margin-bottom:28px">
+      <div class="co2-detail-body" style="padding:0">
+        <table class="top-table" id="regions-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Région</th>
+              <th>DCD</th>
+              <th>Organisateurs</th>
+              <th>Actions données</th>
+              <th>Actions réemploi</th>
+              <th>Actions recyclage</th>
+              <th>CO₂ évité</th>
+            </tr>
+          </thead>
+          <tbody id="regions-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== DERNIÈRE MISE À JOUR ===== -->
+    <div class="last-update">
+      Dernière mise à jour : <span id="last-update-date">—</span>
+    </div>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-logos">
+      <a href="https://digital-cleanup-day.fr" target="_blank" rel="noopener">
+        <img
+          src="logo_dcd.png"
+          alt="Digital Cleanup Day"
+          class="footer-logo-img"
+          onerror="this.style.display='none'"
+        />
+      </a>
+      <a href="https://institutnr.org" target="_blank" rel="noopener">
+        <img
+          src="logo_inr.jpg"
+          alt="Institut du Numérique Responsable"
+          class="footer-logo-img logo-inr"
+          onerror="this.style.display='none'"
+        />
+      </a>
+    </div>
+    <p>🌱 Digital Cleanup Day — Participation par région © 2026</p>
+  </footer>
+
+  <script src="map.js"></script>
+  <script src="regions.js"></script>
+
+</body>
+</html>
