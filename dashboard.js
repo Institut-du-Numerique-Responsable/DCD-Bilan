@@ -31,7 +31,7 @@ const REEMPLOI_FACTOR = {
 
 // URL de l'Apps Script — utilisée en priorité pour charger les données live
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyXNApqKuItrVAOtxeB-W05rjiIW8Slk3cmREJsVBXxrq4oFJi01JpaOJMea52c3DFB/exec";
+   "https://script.google.com/macros/s/";
 
 let RAW = null; // données brutes
 let FILTERED = null; // données après filtre
