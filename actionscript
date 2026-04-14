@@ -2,7 +2,7 @@
 //  Digital Cleanup Day — Google Apps Script
 // ============================================================
 
-const SPREADSHEET_ID = '1_VQyx55YlNj8wLAp7nFCW1p0gPWqNoE1vzFhZyt-55Q';
+const SPREADSHEET_ID = '';
 
 // ============================================================
 // FACTEURS CO2 — ADEME / Base Empreinte / ARCEP
