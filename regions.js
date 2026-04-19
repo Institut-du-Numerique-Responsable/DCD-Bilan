@@ -5,10 +5,10 @@
 
 const CO2 = {
   GO_CLOUD: 209.5,
-  GO_LOCAL: 3.2,
+  GO_LOCAL: 15.7, // g CO₂ / Go — 3,2 usage 1 an (NégaOctet) + 12,5 fabrication HDD cycle de vie (25 kg / 2 To, ADEME, non amortie : achat HDD évité)
   EMAIL: 0.3,
   FICHIER_CLOUD: 8.0,
-  FICHIER_LOCAL: 2.0,
+  FICHIER_LOCAL: 0.79, // g CO₂ / fichier local — hypothèse 50 Mo/fichier × 15,7 g/Go (conversion si Go non renseignés)
   APP: 1.46,
   SMARTPHONE: 30000,
   PORTABLE: 156000,
@@ -27,7 +27,7 @@ const REEMPLOI_FACTOR = {
 };
 
 const APPS_SCRIPT_URL =
-   "https://script.google.com/macros/s/";
+  "https://script.google.com/macros/s/AKfycbxQF2S2YcwsaiHwmGenqhOEs_xAJp8qpD91fWbrDzAIq7ooNoFfh9mE9fBKzWRT3vM0/exec";
 
 document.addEventListener("DOMContentLoaded", () => loadRegions());
 

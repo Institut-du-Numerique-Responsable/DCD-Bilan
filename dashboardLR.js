@@ -4,15 +4,18 @@
 // ============================================================
 
 // ===== IDs DES DCD SUIVIS =====
-const LR_IDS = [115472, 115343, 115120, 115118, 115117, 115116, 114329, 113647, 112665, 112223];
+const LR_IDS = [
+  115472, 115343, 115120, 115118, 115117, 115116, 114329, 113647, 112665,
+  112223,
+];
 
 // ===== FACTEURS CO₂ (méthodologie ADEME / Shift Project) =====
 const CO2 = {
   GO_CLOUD: 209.5,
-  GO_LOCAL: 3.2,
+  GO_LOCAL: 15.7, // g CO₂ / Go — 3,2 usage 1 an (NégaOctet) + 12,5 fabrication HDD cycle de vie (25 kg / 2 To, ADEME, non amortie : achat HDD évité)
   EMAIL: 0.3,
   FICHIER_CLOUD: 8.0,
-  FICHIER_LOCAL: 2.0,
+  FICHIER_LOCAL: 0.79, // g CO₂ / fichier local — hypothèse 50 Mo/fichier × 15,7 g/Go (conversion si Go non renseignés)
   APP: 1.46,
   SMARTPHONE: 30000,
   PORTABLE: 156000,
@@ -26,12 +29,12 @@ const REEMPLOI_FACTOR = {
   Smartphone: CO2.SMARTPHONE,
   "Ordinateur portable": CO2.PORTABLE,
   "Ordinateur fixe": CO2.FIXE,
-  "Écran": CO2.ECRAN,
+  Écran: CO2.ECRAN,
   Tablette: CO2.TABLETTE,
 };
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyXNApqKuItrVAOtxeB-W05rjiIW8Slk3cmREJsVBXxrq4oFJi01JpaOJMea52c3DFB/exec";
+  "https://script.google.com/macros/s/AKfycbxQF2S2YcwsaiHwmGenqhOEs_xAJp8qpD91fWbrDzAIq7ooNoFfh9mE9fBKzWRT3vM0/exec";
 
 // ============================================================
 // CHARGEMENT
@@ -49,7 +52,8 @@ function renderBadges() {
   LR_IDS.forEach((id) => {
     const badge = document.createElement("span");
     badge.className = "badge badge-blue";
-    badge.style.cssText = "font-size:12px;padding:4px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;font-weight:600";
+    badge.style.cssText =
+      "font-size:12px;padding:4px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;font-weight:600";
     badge.textContent = "#" + id;
     container.appendChild(badge);
   });
@@ -85,7 +89,9 @@ async function fetchRawData() {
 
   const resp = await fetch("data.json");
   if (!resp.ok)
-    throw new Error("Impossible de charger les données (ni Apps Script, ni data.json)");
+    throw new Error(
+      "Impossible de charger les données (ni Apps Script, ni data.json)",
+    );
   console.log("Données chargées depuis data.json (export statique)");
   return resp.json();
 }
@@ -117,7 +123,10 @@ function renderFromDataJson(d) {
   renderCO2(d);
   renderTopCleaners(d);
   renderCharts(d);
-  setText("last-update-date", d.exportDate || new Date().toLocaleDateString("fr-FR"));
+  setText(
+    "last-update-date",
+    d.exportDate || new Date().toLocaleDateString("fr-FR"),
+  );
 }
 
 // ============================================================
@@ -129,19 +138,25 @@ function renderKPIs(d) {
   setText("kpi-total-dcd", fmt(totalDCD));
 
   const participants = d.sensibilisation.reduce(
-    (s, e) => s + (e.participants_reels || 0), 0
+    (s, e) => s + (e.participants_reels || 0),
+    0,
   );
   setText("kpi-participants", fmt(participants));
 
   const audience = d.sensibilisation.reduce(
-    (s, e) => s + (e.audience_touchee || 0), 0
+    (s, e) => s + (e.audience_touchee || 0),
+    0,
   );
   setText("kpi-audience", fmt(audience));
 
   const reemploiTotal = d.reemploi.reduce(
     (s, e) =>
-      s + (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0),
-    0
+      s +
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0),
+    0,
   );
   setText("kpi-reemploi", fmt(reemploiTotal));
 
@@ -162,7 +177,11 @@ function renderKPIs(d) {
   const reemploiByType = {};
   d.reemploi.forEach((e) => {
     const t = e.type_equipement || "Autre";
-    const n = (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0);
+    const n =
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0);
     reemploiByType[t] = (reemploiByType[t] || 0) + n;
   });
   setText("kpi-smartphones", fmt(reemploiByType["Smartphone"] || 0));
@@ -184,8 +203,14 @@ function renderKPIs(d) {
 function renderSensibilisation(d) {
   const s = d.sensibilisation || [];
 
-  const totalParticipants = s.reduce((acc, e) => acc + (e.participants_reels || 0), 0);
-  const totalAudience = s.reduce((acc, e) => acc + (e.audience_touchee || 0), 0);
+  const totalParticipants = s.reduce(
+    (acc, e) => acc + (e.participants_reels || 0),
+    0,
+  );
+  const totalAudience = s.reduce(
+    (acc, e) => acc + (e.audience_touchee || 0),
+    0,
+  );
   const totalSensi = totalParticipants + totalAudience;
 
   setText("kpi-participants-detail", fmt(totalParticipants));
@@ -225,7 +250,8 @@ function renderSensibilisation(d) {
 
   const formatsTbody = document.getElementById("sensi-formats-body");
   if (formatsTbody) {
-    while (formatsTbody.firstChild) formatsTbody.removeChild(formatsTbody.firstChild);
+    while (formatsTbody.firstChild)
+      formatsTbody.removeChild(formatsTbody.firstChild);
     const sorted = Object.entries(byFormat)
       .filter(([, v]) => v.sessions > 0)
       .sort((a, b) => b[1].participants - a[1].participants);
@@ -233,7 +259,8 @@ function renderSensibilisation(d) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
       td.colSpan = 2;
-      td.style.cssText = "text-align:center;color:var(--gray-500);font-style:italic";
+      td.style.cssText =
+        "text-align:center;color:var(--gray-500);font-style:italic";
       td.textContent = "Aucune donnée";
       tr.appendChild(td);
       formatsTbody.appendChild(tr);
@@ -255,7 +282,10 @@ function renderSensibilisation(d) {
   const byOrg = {};
   s.forEach((e) => {
     const org = e.organisateur || "Inconnu";
-    byOrg[org] = (byOrg[org] || 0) + (e.participants_reels || 0) + (e.audience_touchee || 0);
+    byOrg[org] =
+      (byOrg[org] || 0) +
+      (e.participants_reels || 0) +
+      (e.audience_touchee || 0);
   });
 
   const topTbody = document.getElementById("sensi-top-body");
@@ -270,7 +300,8 @@ function renderSensibilisation(d) {
       const tr = document.createElement("tr");
       const td = document.createElement("td");
       td.colSpan = 3;
-      td.style.cssText = "text-align:center;color:var(--gray-500);font-style:italic";
+      td.style.cssText =
+        "text-align:center;color:var(--gray-500);font-style:italic";
       td.textContent = "Aucune donnée";
       tr.appendChild(td);
       topTbody.appendChild(tr);
@@ -321,7 +352,14 @@ function renderCO2(d) {
   const co2FCloud = fCloud * CO2.FICHIER_CLOUD;
   const co2FLocal = fLocal * CO2.FICHIER_LOCAL;
   const co2Apps = apps * CO2.APP;
-  const co2Donnees = co2GoCloud + co2GoLocal + co2Emails + co2Posts + co2FCloud + co2FLocal + co2Apps;
+  const co2Donnees =
+    co2GoCloud +
+    co2GoLocal +
+    co2Emails +
+    co2Posts +
+    co2FCloud +
+    co2FLocal +
+    co2Apps;
 
   setText("co2-go-cloud-kg", fmtCO2(co2GoCloud));
   setText("co2-go-local-kg", fmtCO2(co2GoLocal));
@@ -336,7 +374,11 @@ function renderCO2(d) {
   const co2ReemploiDetail = {};
   d.reemploi.forEach((e) => {
     const t = e.type_equipement || "Autre";
-    const n = (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0);
+    const n =
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0);
     const factor = REEMPLOI_FACTOR[t] || 0;
     const co2 = n * factor;
     co2Reemploi += co2;
@@ -344,7 +386,10 @@ function renderCO2(d) {
   });
 
   setText("co2-smartphones", fmtCO2(co2ReemploiDetail["Smartphone"] || 0));
-  setText("co2-portables", fmtCO2(co2ReemploiDetail["Ordinateur portable"] || 0));
+  setText(
+    "co2-portables",
+    fmtCO2(co2ReemploiDetail["Ordinateur portable"] || 0),
+  );
   setText("co2-fixes", fmtCO2(co2ReemploiDetail["Ordinateur fixe"] || 0));
   setText("co2-ecrans", fmtCO2(co2ReemploiDetail["Écran"] || 0));
   setText("co2-tablettes", fmtCO2(co2ReemploiDetail["Tablette"] || 0));
@@ -360,7 +405,10 @@ function renderCO2(d) {
 
   const co2Total = co2Donnees + co2Reemploi + co2Recyclage;
   setText("co2-kg", fmtDec(co2Total / 1000000) + " t");
-  setText("co2-go-source", fmtGo(goCloud) + " cloud + " + fmtGo(goLocal) + " local supprimés");
+  setText(
+    "co2-go-source",
+    fmtGo(goCloud) + " cloud + " + fmtGo(goLocal) + " local supprimés",
+  );
 
   const total = co2Total || 1;
   setBar("bar-donnees", (co2Donnees / total) * 100, "co2-donnees-pct");
@@ -389,7 +437,8 @@ function renderImpactWidget(kgCO2) {
     "https://impactco2.fr/iframes/comparateur/etiquette?value=" +
     encodeURIComponent(value) +
     "&comparisons=voiturethermique,tgv,avion-moyencourrier,streamingvideo&language=fr";
-  iframe.style.cssText = "border:none;width:100%;min-height:480px;border-radius:8px;display:block";
+  iframe.style.cssText =
+    "border:none;width:100%;min-height:480px;border-radius:8px;display:block";
   iframe.loading = "lazy";
   iframe.title = "Équivalences CO₂";
   iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
@@ -420,7 +469,11 @@ function renderTopCleaners(d) {
   const reemploiCO2 = {};
   d.reemploi.forEach((e) => {
     const org = e.organisateur || "Inconnu";
-    const n = (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0);
+    const n =
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0);
     const factor = REEMPLOI_FACTOR[e.type_equipement] || 0;
     reemploiCO2[org] = (reemploiCO2[org] || 0) + n * factor;
   });
@@ -429,7 +482,8 @@ function renderTopCleaners(d) {
   const recyclageCO2 = {};
   d.recyclage.forEach((e) => {
     const org = e.organisateur || "Inconnu";
-    recyclageCO2[org] = (recyclageCO2[org] || 0) + (e.poids_kg || 0) * 0.76 * CO2.DEEE_KG;
+    recyclageCO2[org] =
+      (recyclageCO2[org] || 0) + (e.poids_kg || 0) * 0.76 * CO2.DEEE_KG;
   });
   fillTopTable("top-recyclage-body", recyclageCO2);
 }
@@ -503,7 +557,12 @@ function renderCharts(d) {
     type: "doughnut",
     data: {
       labels: Object.keys(structCount).map(capitalize),
-      datasets: [{ data: Object.values(structCount), backgroundColor: palette(Object.keys(structCount).length) }],
+      datasets: [
+        {
+          data: Object.values(structCount),
+          backgroundColor: palette(Object.keys(structCount).length),
+        },
+      ],
     },
     options: { responsive: true, plugins: { legend: { position: "bottom" } } },
   });
@@ -513,17 +572,21 @@ function renderCharts(d) {
   d.general.forEach((e) => {
     if (e.region) regionCount[e.region] = (regionCount[e.region] || 0) + 1;
   });
-  const topRegions = Object.entries(regionCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const topRegions = Object.entries(regionCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
   charts.regions = new Chart(document.getElementById("chart-regions"), {
     type: "bar",
     data: {
       labels: topRegions.map((r) => r[0]),
-      datasets: [{
-        label: "Nombre de DCD",
-        data: topRegions.map((r) => r[1]),
-        backgroundColor: "#ec4899",
-        borderRadius: 6,
-      }],
+      datasets: [
+        {
+          label: "Nombre de DCD",
+          data: topRegions.map((r) => r[1]),
+          backgroundColor: "#ec4899",
+          borderRadius: 6,
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -537,19 +600,25 @@ function renderCharts(d) {
   const reemploiByType = {};
   d.reemploi.forEach((e) => {
     const t = e.type_equipement || "Autre";
-    const n = (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0);
+    const n =
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0);
     reemploiByType[t] = (reemploiByType[t] || 0) + n;
   });
   charts.reemploi = new Chart(document.getElementById("chart-reemploi"), {
     type: "bar",
     data: {
       labels: Object.keys(reemploiByType),
-      datasets: [{
-        label: "Équipements réemployés",
-        data: Object.values(reemploiByType),
-        backgroundColor: "#a855f7",
-        borderRadius: 6,
-      }],
+      datasets: [
+        {
+          label: "Équipements réemployés",
+          data: Object.values(reemploiByType),
+          backgroundColor: "#a855f7",
+          borderRadius: 6,
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -568,7 +637,12 @@ function renderCharts(d) {
     type: "doughnut",
     data: {
       labels: Object.keys(recyclageByType),
-      datasets: [{ data: Object.values(recyclageByType), backgroundColor: palette(Object.keys(recyclageByType).length) }],
+      datasets: [
+        {
+          data: Object.values(recyclageByType),
+          backgroundColor: palette(Object.keys(recyclageByType).length),
+        },
+      ],
     },
     options: { responsive: true, plugins: { legend: { position: "bottom" } } },
   });
@@ -583,7 +657,11 @@ function renderCharts(d) {
 
   let co2Reemploi = 0;
   d.reemploi.forEach((e) => {
-    const n = (e.don || 0) + (e.reparation || 0) + (e.protection || 0) + (e.reutilisation || 0);
+    const n =
+      (e.don || 0) +
+      (e.reparation || 0) +
+      (e.protection || 0) +
+      (e.reutilisation || 0);
     co2Reemploi += n * (REEMPLOI_FACTOR[e.type_equipement] || 0);
   });
   const poidsTotal = d.recyclage.reduce((s, e) => s + (e.poids_kg || 0), 0);
@@ -592,29 +670,42 @@ function renderCharts(d) {
   const co2Sources = {
     "Go cloud": (goCloud * CO2.GO_CLOUD) / 1000,
     "Go local": (goLocal * CO2.GO_LOCAL) / 1000,
-    "Emails": (emails * CO2.EMAIL) / 1000,
+    Emails: (emails * CO2.EMAIL) / 1000,
     "Fichiers cloud": (fCloud * CO2.FICHIER_CLOUD) / 1000,
     "Fichiers local": (fLocal * CO2.FICHIER_LOCAL) / 1000,
-    "Apps": (apps * CO2.APP) / 1000,
-    "Réemploi": co2Reemploi / 1000,
-    "Recyclage": co2Recyclage / 1000,
+    Apps: (apps * CO2.APP) / 1000,
+    Réemploi: co2Reemploi / 1000,
+    Recyclage: co2Recyclage / 1000,
   };
 
   charts.co2 = new Chart(document.getElementById("chart-co2"), {
     type: "bar",
     data: {
       labels: Object.keys(co2Sources),
-      datasets: [{
-        label: "kg CO₂ évités",
-        data: Object.values(co2Sources).map((v) => Math.round(v * 10) / 10),
-        backgroundColor: ["#ec4899","#f9a8d4","#9d174d","#a855f7","#d8b4fe","#6b21a8","#3b82f6","#fb923c"],
-        borderRadius: 6,
-      }],
+      datasets: [
+        {
+          label: "kg CO₂ évités",
+          data: Object.values(co2Sources).map((v) => Math.round(v * 10) / 10),
+          backgroundColor: [
+            "#ec4899",
+            "#f9a8d4",
+            "#9d174d",
+            "#a855f7",
+            "#d8b4fe",
+            "#6b21a8",
+            "#3b82f6",
+            "#fb923c",
+          ],
+          borderRadius: 6,
+        },
+      ],
     },
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "kg CO₂" } } },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: "kg CO₂" } },
+      },
     },
   });
 
@@ -626,8 +717,18 @@ function renderCharts(d) {
       data: {
         labels: ["Fichiers", "Go supprimés"],
         datasets: [
-          { label: "Cloud", data: [fCloud, goCloud], backgroundColor: "#3b82f6", borderRadius: 6 },
-          { label: "Local", data: [fLocal, goLocal], backgroundColor: "#10b981", borderRadius: 6 },
+          {
+            label: "Cloud",
+            data: [fCloud, goCloud],
+            backgroundColor: "#3b82f6",
+            borderRadius: 6,
+          },
+          {
+            label: "Local",
+            data: [fLocal, goLocal],
+            backgroundColor: "#10b981",
+            borderRadius: 6,
+          },
         ],
       },
       options: {
@@ -675,9 +776,18 @@ function capitalize(s) {
 
 function palette(n) {
   const colors = [
-    "#9d174d","#ec4899","#6b21a8","#a855f7","#be185d",
-    "#9f1239","#f472b6","#c084fc","#fb7185","#fda4af",
-    "#818cf8","#3b82f6",
+    "#9d174d",
+    "#ec4899",
+    "#6b21a8",
+    "#a855f7",
+    "#be185d",
+    "#9f1239",
+    "#f472b6",
+    "#c084fc",
+    "#fb7185",
+    "#fda4af",
+    "#818cf8",
+    "#3b82f6",
   ];
   return Array.from({ length: n }, (_, i) => colors[i % colors.length]);
 }

@@ -3,7 +3,7 @@
 // ============================================================
 
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/";
+  "https://script.google.com/macros/s/AKfycbxQF2S2YcwsaiHwmGenqhOEs_xAJp8qpD91fWbrDzAIq7ooNoFfh9mE9fBKzWRT3vM0/exec";
 
 let collectedData = {};
 

@@ -129,31 +129,60 @@
             <div class="calc-title">Go supprimés en local</div>
             <div class="calc-subtitle">Disques durs, SSD, smartphones, tablettes</div>
           </div>
-          <div class="calc-factor">3,2 g CO₂/Go/an</div>
+          <div class="calc-factor">15,7 g CO₂/Go</div>
         </div>
         <div class="calc-body">
           <div class="calc-formula-row">
             <div class="formula-box">
               <div class="formula">
-                CO₂ (g) = Go local supprimés × 3,2
+                CO₂ (g) = Go local supprimés × 15,7
+              </div>
+              <div class="formula" style="font-size:0.85em;color:var(--gray-600);margin-top:6px;">
+                = Go × (3,2 usage/an + 12,5 fabrication HDD évitée)
               </div>
             </div>
           </div>
           <div class="calc-explanation">
-            <h4>Pourquoi un facteur plus faible ?</h4>
+            <h4>Un facteur en deux composantes</h4>
             <p>
-              Le stockage local (disque dur, SSD) ne consomme de l'énergie
-              qu'en lecture/écriture, contrairement aux serveurs cloud qui
-              fonctionnent <strong>24h/24 en permanence</strong>.
-              L'impact est donc nettement plus faible.
+              Ce facteur intègre deux impacts distincts — l'un annuel, l'autre
+              sur le cycle de vie complet du matériel :
             </p>
+            <ul>
+              <li>
+                ⚡ <strong>3,2 g CO₂/Go/an — consommation électrique en usage</strong>
+                (lecture/écriture, veille) — Source : NégaOctet 2021.
+                Calculé sur 1 an, cohérent avec les autres facteurs annuels (cloud, apps).
+              </li>
+              <li>
+                🏭 <strong>12,5 g CO₂/Go — fabrication du support de stockage évitée</strong>
+                (cycle de vie complet, <em>non amortie</em>) :
+                un disque dur externe 2 To représente ~25 kg CO₂eq de fabrication
+                (ADEME Base Empreinte®). En libérant de l'espace, l'utilisateur
+                évite l'achat d'un disque supplémentaire — on compte donc
+                <strong>la totalité</strong> de l'empreinte de fabrication
+                rapportée à la capacité : 25 000 g ÷ 2 000 Go = 12,5 g/Go.
+              </li>
+            </ul>
+            <div class="info-box">
+              <strong>ℹ️ Pourquoi <em>ne pas</em> amortir la fabrication ?</strong>
+              Lorsque le stockage local est saturé, l'achat d'un support
+              supplémentaire (HDD externe, SSD) est l'alternative la plus courante.
+              Supprimer des fichiers locaux <strong>évite directement cet achat</strong>
+              — autrement dit, on économise l'empreinte carbone de fabrication
+              <strong>sur toute la durée de vie du disque non acheté</strong>,
+              pas seulement sur un an. La fabrication représente ~80 % de l'impact
+              d'un équipement numérique : l'amortir sur 1 an sous-estimait fortement
+              le gain réel.
+            </div>
             <div class="example-box">
               <strong>Exemple :</strong> Supprimer 50 Go en local
-              = 50 × 3,2 = <strong>160 g = 0,16 kg CO₂ évités par an</strong>
+              = 50 × 15,7 = <strong>785 g = 0,79 kg CO₂ évités</strong>
+              (dont 160 g d'usage/an + 625 g de fabrication HDD évitée)
             </div>
           </div>
           <div class="source-tag">
-            📚 Source : ADEME — Base Empreinte® / Étude NégaOctet (2021)
+            📚 Sources : NégaOctet (2021) pour l'usage — ADEME Base Empreinte® pour la fabrication HDD (cycle de vie non amorti)
           </div>
         </div>
       </div>
@@ -244,25 +273,44 @@
             <div class="calc-title">Fichiers locaux supprimés</div>
             <div class="calc-subtitle">PC, Mac, tablettes, smartphones</div>
           </div>
-          <div class="calc-factor">2,0 g CO₂/fichier</div>
+          <div class="calc-factor">0,79 g CO₂/fichier</div>
         </div>
         <div class="calc-body">
           <div class="calc-formula-row">
             <div class="formula-box">
               <div class="formula">
-                CO₂ (g) = Nombre de fichiers locaux × 2,0
+                CO₂ (g) = Nombre de fichiers locaux × 0,79
+              </div>
+              <div class="formula" style="font-size:0.85em;color:var(--gray-600);margin-top:6px;">
+                = (Nb fichiers × 0,05 Go) × 15,7 g/Go
               </div>
             </div>
           </div>
           <div class="calc-explanation">
+            <h4>Principe : conversion fichier → Go</h4>
             <p>
-              Facteur plus faible que le cloud car le stockage local
-              ne génère pas de consommation réseau permanente ni de
-              réplication automatique.
+              Ce facteur applique l'hypothèse d'un fichier local moyen
+              d'environ <strong>50 Mo</strong> (0,05 Go) — mix documents,
+              photos, quelques vidéos — converti au facteur Go local cycle
+              de vie (15,7 g CO₂/Go : usage 1 an + fabrication HDD évitée).
             </p>
+            <div class="info-box">
+              <strong>ℹ️ Quand ce facteur est-il utilisé ?</strong>
+              Si vous connaissez le <strong>volume en Go</strong> supprimé,
+              renseignez-le en priorité : c'est la mesure la plus fiable.
+              Le champ "Nombre de fichiers" sert de <strong>conversion de
+              secours</strong> lorsque le volume n'a pas pu être estimé
+              (1 fichier ≈ 50 Mo par défaut). Renseigner les deux champs
+              simultanément additionne les deux contributions — à utiliser
+              uniquement si vous avez des lots réellement distincts.
+            </div>
+            <div class="example-box">
+              <strong>Exemple :</strong> Supprimer 200 fichiers locaux
+              (≈ 10 Go) = 200 × 0,79 = <strong>158 g ≈ 0,16 kg CO₂ évités</strong>
+            </div>
           </div>
           <div class="source-tag">
-            📚 Source : Estimation basée sur ADEME Base Empreinte® — Facteur estimé
+            📚 Source : Estimation — hypothèse 50 Mo/fichier × facteur Go local cycle de vie (NégaOctet 2021 + ADEME Base Empreinte®)
           </div>
         </div>
       </div>
@@ -325,9 +373,9 @@
             </tr>
             <tr>
               <td>💾 Go local supprimés</td>
-              <td class="factor">3,2 g</td>
-              <td>par Go / an</td>
-              <td>ADEME / NégaOctet</td>
+              <td class="factor">15,7 g</td>
+              <td>par Go (usage 1 an + fab HDD cycle de vie)</td>
+              <td>NégaOctet (usage) + ADEME HDD (fabrication)</td>
             </tr>
             <tr>
               <td>📧 Emails supprimés</td>
@@ -343,9 +391,9 @@
             </tr>
             <tr>
               <td>💻 Fichiers locaux supprimés</td>
-              <td class="factor">2,0 g</td>
-              <td>par fichier</td>
-              <td>ADEME — estimé</td>
+              <td class="factor">0,79 g</td>
+              <td>par fichier (~50 Mo, conversion Go)</td>
+              <td>Estimation — 50 Mo × facteur Go local</td>
             </tr>
             <tr>
               <td>📲 Apps désinstallées</td>

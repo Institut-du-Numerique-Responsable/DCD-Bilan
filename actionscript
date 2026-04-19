@@ -2,7 +2,7 @@
 //  Digital Cleanup Day — Google Apps Script
 // ============================================================
 
-const SPREADSHEET_ID = '';
+const SPREADSHEET_ID = '1_VQyx55YlNj8wLAp7nFCW1p0gPWqNoE1vzFhZyt-55Q';
 
 // ============================================================
 // FACTEURS CO2 — ADEME / Base Empreinte / ARCEP
@@ -10,12 +10,12 @@ const SPREADSHEET_ID = '';
 const CO2_FACTEURS = {
   // DCD Données
   goCloud:       209.5,  // g CO₂/Go/an — The Shift Project / GreenIT.fr
-  goLocal:       3.2,    // g CO₂/Go/an — ADEME / NégaOctet
+  goLocal:       15.7,   // g CO₂/Go — 3,2 usage 1 an (NégaOctet) + 12,5 fabrication HDD cycle de vie complet (25 kg / 2 To, ADEME, non amortie : achat HDD évité)
   email:         0.3,  // g CO₂/email supprimé — stockage évité
                          // Calcul : 75 Ko × 209,5 g/Go/an ÷ 1 048 576
                          // Source : ARCEP 2023 / ADEME Base Empreinte®
   fichierCloud:  8.0,    // g CO₂/fichier cloud — NégaOctet estimé
-  fichierLocal:  2.0,    // g CO₂/fichier local — ADEME estimé
+  fichierLocal:  0.79,   // g CO₂/fichier local — hypothèse 50 Mo/fichier × 15,7 g/Go (conversion si Go non renseignés)
   app:           1.46,   // g CO₂/app/an — GreenIT.fr
   postSocial:    0.5,    // g CO₂/post supprimé — estimation
 

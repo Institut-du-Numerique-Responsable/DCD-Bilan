@@ -1,22 +1,9 @@
-# 🌱 Digital Cleanup Day — Formulaire de collecte de données
-Application web statique permettant de collecter et d'exporter les données d'un événement **Digital Cleanup Day** : sensibilisation, réemploi, nettoyage de données numériques et recyclage d'équipements.
+# Digital Cleanup Day — Bilan et Dashboard 2026
 
----
-## 📋 Présentation
-Ce formulaire multi-étapes guide les organisateurs d'un Digital Cleanup Day dans la saisie structurée de leurs actions. À la fin du processus, les données sont exportées au format **JSON** et sauvegardées localement dans le navigateur.
+Ce projet est une plateforme web conçue pour collecter, consolider et visualiser les données d'impact du **Digital Cleanup Day 2026**. Elle permet aux organisateurs de déclarer leurs actions et de visualiser en temps réel l'impact environnemental (notamment les économies de CO₂) généré par l'événement à l'échelle nationale.
 
----
-## ✨ Fonctionnalités
+![Digital Cleanup Day](logo_dcd.png)
 
-Formulaire de collecte des donnée
-- 🎓 **Sensibilisation** : webinaires, Fresque du Numérique, jeux sérieux (Numéville, Dowino, The Wokies), autres formats
-- ♻️ **Réemploi** : don, réparation, protection, réutilisation par type d'équipement
-- 🗂️ **Données** : e-mails, publications, fichiers cloud/local supprimés, applications désinstallées, Go récupérés
-- 🔋 **Recyclage** : collecte d'équipements DEEE (quantité + poids en kg)
-et 
-- ⬇️ **Export JSON** téléchargeable directement depuis le navigateur
-
----
 ## 📋 Composants du Projet
 
 Le projet s'articule autour de quatre piliers principaux :
@@ -57,24 +44,6 @@ Une page permettant de filtrer et de visualiser les statistiques par région fra
 1.  **Saisie** : L'organisateur remplit le formulaire sur `index.html`.
 2.  **Envoi** : Les données sont envoyées vers un script Google Apps Script qui les enregistre dans une feuille de calcul maître.
 3.  **Visualisation** : Le dashboard (`dashboard.html`) interroge la feuille de calcul via une API dédiée, traite les données en JavaScript et met à jour les indicateurs et graphiques instantanément.
----
-
-## 📅 Contexte
-
-Le **Digital Cleanup** Day est un événement mondial annuel invitant particuliers et organisations à nettoyer leurs données numériques et à agir pour un numérique plus responsable.
-
-🔗 [Site officiel Digital Cleanup Day](https://www.digitalcleanupday.org/)
 
 ---
-
-## 📄 Licence
-
-Ce projet est placé dans le **domaine public** sous licence [Creative Commons Zero v1.0 Universal (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/).
-
-Vous pouvez copier, modifier, distribuer et utiliser ce projet, même à des fins commerciales, sans demander d'autorisation.
-
-[![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)
-
----
-
-*Digital Cleanup Day — Formulaire de collecte de données © 2026*
+*Ce projet est soutenu par l'Institut du Numérique Responsable (INR).*

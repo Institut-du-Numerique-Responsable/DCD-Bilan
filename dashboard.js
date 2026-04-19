@@ -6,10 +6,10 @@
 // ===== FACTEURS CO₂ (méthodologie ADEME / Shift Project) =====
 const CO2 = {
   GO_CLOUD: 209.5, // g CO₂ / Go / an
-  GO_LOCAL: 3.2, // g CO₂ / Go / an
+  GO_LOCAL: 15.7, // g CO₂ / Go — 3,2 usage 1 an (NégaOctet) + 12,5 fabrication HDD cycle de vie (25 kg / 2 To, ADEME, non amortie : achat HDD évité)
   EMAIL: 0.3, // g CO₂ / email
   FICHIER_CLOUD: 8.0, // g CO₂ / fichier cloud
-  FICHIER_LOCAL: 2.0, // g CO₂ / fichier local
+  FICHIER_LOCAL: 0.79, // g CO₂ / fichier local — hypothèse 50 Mo/fichier × 15,7 g/Go (conversion si Go non renseignés)
   APP: 1.46, // g CO₂ / app / an
   // Réemploi — empreinte fabrication (g CO₂)
   SMARTPHONE: 30000,
@@ -31,7 +31,7 @@ const REEMPLOI_FACTOR = {
 
 // URL de l'Apps Script — utilisée en priorité pour charger les données live
 const APPS_SCRIPT_URL =
-   "https://script.google.com/macros/s/";
+  "https://script.google.com/macros/s/AKfycbxQF2S2YcwsaiHwmGenqhOEs_xAJp8qpD91fWbrDzAIq7ooNoFfh9mE9fBKzWRT3vM0/exec";
 
 let RAW = null; // données brutes
 let FILTERED = null; // données après filtre
@@ -49,6 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("filter-structure")
     ?.addEventListener("change", applyAndRender);
+  document
+    .getElementById("filter-dept")
+    ?.addEventListener("change", applyAndRender);
+  document
+    .getElementById("filter-cleanup-ids")
+    ?.addEventListener("input", applyAndRender);
 });
 
 function applyAndRender() {
@@ -151,16 +157,37 @@ function populateRegionFilter(general) {
   });
 }
 
+// Extrait le code département (ex: "75", "2A", "971") depuis une saisie libre.
+function parseDeptCode(raw) {
+  if (!raw) return null;
+  const m = String(raw).match(/\b(2[AB]|\d{2,3})\b/i);
+  return m ? m[1].toUpperCase() : null;
+}
+
 function applyFilters(data) {
   const region = document.getElementById("filter-region")?.value || "";
   const structure = document.getElementById("filter-structure")?.value || "";
+  const dept = (
+    document.getElementById("filter-dept")?.value || ""
+  ).toUpperCase();
+  const cleanupRaw = document.getElementById("filter-cleanup-ids")?.value || "";
+  const cleanupIds = cleanupRaw
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
 
   // Aucun filtre actif → tout retourner tel quel
-  if (!region && !structure) return data;
+  if (!region && !structure && !dept && !cleanupIds.length) return data;
 
   function matchGeneral(e) {
     if (region && e.region !== region) return false;
     if (structure && (e.type_structure || "").toLowerCase() !== structure)
+      return false;
+    if (dept && parseDeptCode(e.dept) !== dept) return false;
+    if (
+      cleanupIds.length &&
+      !cleanupIds.includes(String(e.cleanup_id || "").toLowerCase())
+    )
       return false;
     return true;
   }
