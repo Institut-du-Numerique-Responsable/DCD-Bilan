@@ -1,0 +1,32 @@
+# Métadonnées de citation lisibles par les humains, les moteurs et les assistants IA.
+# Format Citation File Format 1.2.0 — https://citation-file-format.github.io
+cff-version: 1.2.0
+message: "Si vous utilisez ce travail, merci de le citer comme ci-dessous."
+type: software
+title: "dataviz-digital-cleanup — Collecte et visualisation des données du Digital Cleanup Day"
+abstract: "Interface de collecte et de visualisation des données des Digital Cleanup Day / Data collection and dataviz for Digital Cleanup Day"
+authors:
+  - name: "Institut du Numérique Responsable"
+    alias: "INR"
+    website: "https://institutnr.org"
+  - given-names: "Guillaume"
+    family-names: "Gallon"
+    alias: "gridboy"
+    affiliation: "Institut du Numérique Responsable"
+repository-code: "https://github.com/Institut-du-Numerique-Responsable/dataviz-digital-cleanup"
+url: "https://institutnr.org"
+license: CC0-1.0
+date-released: 2026-03-06
+keywords:
+  - "dashboard"
+  - "data-collection"
+  - "data-visualization"
+  - "dataviz"
+  - "digital-cleanup"
+  - "digital-cleanup-day"
+  - "digital-sustainability"
+  - "green-it"
+  - "inr"
+  - "numerique-responsable"
+  - "sobriete-numerique"
+  - "sustainable-it"
